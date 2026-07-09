@@ -1,0 +1,182 @@
+<!-- ================================================================
+   CUENTAS A DOMINIO · CON BANNER Y SELECTOR DINÁMICO
+   ================================================================ -->
+
+<div class="cuentas-dominio-container">
+
+    <!-- ===== BANNER PRINCIPAL (IMAGEN COMPLETA) ===== -->
+    <div class="cuentas-banner" style="
+        width: 100%;
+        border-radius: var(--radius);
+        overflow: hidden;
+        margin-bottom: 24px;
+        position: relative;
+        background-image: url('imagenes/banner-solicitarcuenta.png');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        min-height: 280px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--border-light);
+        box-shadow: var(--shadow);
+    ">
+        <!-- Overlay oscuro para mejorar legibilidad -->
+        <div style="
+            position: absolute;
+            inset: 0;
+            background: rgba(10, 14, 26, 0.55);
+            backdrop-filter: blur(2px);
+            border-radius: var(--radius);
+        "></div>
+
+        <!-- Contenido del banner -->
+        <div style="
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding: 40px 24px;
+            max-width: 700px;
+        ">
+            <div class="cuentas-header-badge" style="
+                display: inline-block;
+                background: rgba(255, 255, 255, 0.12);
+                backdrop-filter: blur(4px);
+                padding: 6px 20px;
+                border-radius: 40px;
+                font-size: 0.75rem;
+                font-weight: 700;
+                color: #fbbf24;
+                letter-spacing: 1px;
+                text-transform: uppercase;
+                border: 1px solid rgba(255, 255, 255, 0.15);
+                margin-bottom: 12px;
+            ">
+                <i class="fas fa-crown"></i> PREMIUM
+            </div>
+
+            <h1 class="cuentas-header-title" style="
+                font-size: 2.8rem;
+                font-weight: 900;
+                color: white;
+                margin: 0;
+                text-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+            ">
+                Cuentas <span style="color: #fbbf24;">a dominio</span>
+            </h1>
+
+            <p class="cuentas-header-subtitle" style="
+                font-size: 1.1rem;
+                color: rgba(255, 255, 255, 0.85);
+                margin-top: 6px;
+                text-shadow: 0 2px 20px rgba(0, 0, 0, 0.4);
+                font-weight: 400;
+                letter-spacing: 0.5px;
+            ">
+                Personaliza tu cuenta de streaming con tus datos
+            </p>
+        </div>
+    </div>
+
+    <!-- ===== PASOS ===== -->
+    <div class="cuentas-pasos">
+        <div class="paso-item">
+            <div class="paso-numero">1</div>
+            <div class="paso-contenido">
+                <h4>Elige tu plataforma</h4>
+                <p>Selecciona el servicio que deseas</p>
+            </div>
+        </div>
+        <div class="paso-item">
+            <div class="paso-numero">2</div>
+            <div class="paso-contenido">
+                <h4>Ingresa tus datos</h4>
+                <p>Correo y contraseña personalizada</p>
+            </div>
+        </div>
+        <div class="paso-item">
+            <div class="paso-numero">3</div>
+            <div class="paso-contenido">
+                <h4>¡Listo!</h4>
+                <p>Recibe tu cuenta al instante</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== FORMULARIO ===== -->
+    <div class="cuentas-formulario" id="solicitudForm">
+        
+        <!-- Selector de plataforma -->
+        <div class="form-section">
+            <label class="form-label">
+                <i class="fas fa-tv"></i> Selecciona tu plataforma
+            </label>
+            <div class="platform-grid" id="platformGrid">
+                <div style="text-align:center; padding:20px; color:var(--text-secondary);">
+                    <i class="fas fa-spinner fa-spin"></i> Cargando plataformas...
+                </div>
+            </div>
+            <input type="hidden" id="serviceSelect" value="">
+        </div>
+
+        <!-- Datos del usuario -->
+        <div class="form-section">
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-envelope"></i> Correo electrónico
+                    </label>
+                    <input type="email" id="requestEmail" placeholder="nombre@ejemplo.com" required />
+                    <small>Usa un correo válido para recibir tu cuenta</small>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-lock"></i> Contraseña
+                    </label>
+                    <input type="password" id="requestPassword" placeholder="Tu contraseña (opcional)" />
+                    <small>Déjala en blanco para que la generemos</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resumen -->
+        <div class="form-section resumen">
+            <div class="resumen-item">
+                <span class="resumen-label"><i class="fas fa-coins"></i> Costo</span>
+                <span class="resumen-value" id="requestPrice">0 créditos</span>
+            </div>
+            <div class="resumen-item">
+                <span class="resumen-label"><i class="fas fa-wallet"></i> Tu saldo</span>
+                <span class="resumen-value balance" id="requestBalance">0 créditos</span>
+            </div>
+        </div>
+
+        <!-- Botón -->
+        <button type="button" class="btn-solicitar" id="solicitarBtn">
+            <i class="fas fa-paper-plane"></i> Solicitar cuenta
+        </button>
+
+        <div id="requestMessage" class="request-message"></div>
+    </div>
+
+    <!-- ===== HISTORIAL RÁPIDO ===== -->
+    <div class="cuentas-historial">
+        <div class="historial-header">
+            <h4><i class="fas fa-clock"></i> Solicitudes recientes</h4>
+            <button class="btn-ver-todas" onclick="navigateTo('historial')">
+                Ver todas <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+        <div id="recentRequests" class="requests-list">
+            <div class="request-empty">
+                <i class="fas fa-inbox"></i>
+                <p>No hay solicitudes recientes</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ===== CARGAR EL SCRIPT EXTERNO ===== -->
+<script src="js/cuentas-dominio.js"></script>

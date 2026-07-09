@@ -1,10 +1,10 @@
 {
   "build": {
     "builder": "NIXPACKS",
-    "buildCommand": "cd shadow_V1 && pip install -r requirements.txt"
+    "buildCommand": "pip install -r requirements.txt"
   },
   "deploy": {
-    "startCommand": "cd shadow_V1 && gunicorn app:app",
+    "startCommand": "gunicorn app:app",
     "healthcheckPath": "/",
     "restartPolicyType": "ON_FAILURE"
   }

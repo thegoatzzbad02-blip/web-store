@@ -1,0 +1,139 @@
+<!-- ================================================================
+   CUENTAS A DOMINIO · REDISEÑADO
+   ================================================================ -->
+
+<div class="cuentas-dominio-container">
+
+    <!-- ===== ENCABEZADO CON BANNER (IMAGEN DE FONDO) ===== -->
+    <div class="cuentas-header" style="
+        background-image: url('imagenes/banner-solicitarcuenta.png');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        position: relative;
+        padding: 40px 24px;
+        min-height: 220px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        border-radius: var(--radius);
+        overflow: hidden;
+    ">
+        <!-- Overlay oscuro para legibilidad -->
+        <div style="
+            position: absolute;
+            inset: 0;
+            background: rgba(10, 14, 26, 0.6);
+            backdrop-filter: blur(3px);
+            border-radius: var(--radius);
+        "></div>
+
+        <!-- Contenido (igual que antes, pero con estilos inline para mantener) -->
+        <div style="position: relative; z-index: 2; text-align: center;">
+            <div class="cuentas-header-badge">
+                <i class="fas fa-crown"></i> PREMIUM
+            </div>
+            <h1 class="cuentas-header-title">Cuentas <span>a dominio</span></h1>
+            <p class="cuentas-header-subtitle">Personaliza tu cuenta de streaming con tus datos</p>
+        </div>
+    </div>
+
+
+    <!-- ===== PASOS (guía visual) ===== -->
+    <div class="cuentas-pasos">
+        <div class="paso-item">
+            <div class="paso-numero">1</div>
+            <div class="paso-contenido">
+                <h4>Elige tu plataforma</h4>
+                <p>Selecciona el servicio que deseas</p>
+            </div>
+        </div>
+        <div class="paso-item">
+            <div class="paso-numero">2</div>
+            <div class="paso-contenido">
+                <h4>Ingresa tus datos</h4>
+                <p>Correo y contraseña personalizada</p>
+            </div>
+        </div>
+        <div class="paso-item">
+            <div class="paso-numero">3</div>
+            <div class="paso-contenido">
+                <h4>¡Listo!</h4>
+                <p>Recibe tu cuenta al instante</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== FORMULARIO ===== -->
+    <div class="cuentas-formulario">
+        
+        <!-- Selector de plataforma (mejorado) -->
+        <div class="form-section">
+            <label class="form-label">
+                <i class="fas fa-tv"></i> Selecciona tu plataforma
+            </label>
+            <div class="platform-grid" id="platformOptions">
+                <p style="color:var(--text-secondary);">Cargando plataformas...</p>
+            </div>
+            <input type="hidden" id="serviceSelect" value="">
+        </div>
+
+        <!-- Datos del usuario -->
+        <div class="form-section">
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-envelope"></i> Correo electrónico
+                    </label>
+                    <input type="email" id="requestEmail" placeholder="nombre@ejemplo.com" required />
+                    <small>Usa un correo válido para recibir tu cuenta</small>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-lock"></i> Contraseña
+                    </label>
+                    <input type="password" id="requestPassword" placeholder="Tu contraseña (opcional)" />
+                    <small>Déjala en blanco para que la generemos</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resumen de costos -->
+        <div class="form-section resumen">
+            <div class="resumen-item">
+                <span class="resumen-label"><i class="fas fa-coins"></i> Costo</span>
+                <span class="resumen-value" id="requestPrice">15 créditos</span>
+            </div>
+            <div class="resumen-item">
+                <span class="resumen-label"><i class="fas fa-wallet"></i> Tu saldo</span>
+                <span class="resumen-value balance" id="requestBalance">100 créditos</span>
+            </div>
+        </div>
+        <div id="requestSummary" class="request-summary">Selecciona una plataforma para ver si tu saldo alcanza.</div>
+
+     <button type="button" class="btn-solicitar" id="solicitarBtn">
+    <i class="fas fa-paper-plane"></i> Solicitar cuenta
+</button>
+
+        <div id="requestMessage" class="request-message"></div>
+    </div>
+
+    <!-- ===== HISTORIAL RÁPIDO ===== -->
+    <div class="cuentas-historial">
+        <div class="historial-header">
+            <h4><i class="fas fa-clock"></i> Solicitudes recientes</h4>
+            <button class="btn-ver-todas" onclick="navigateTo('historial')">
+                Ver todas <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+        <div id="recentRequests" class="requests-list">
+            <div class="request-empty">
+                <i class="fas fa-inbox"></i>
+                <p>No hay solicitudes recientes</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+

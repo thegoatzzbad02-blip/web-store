@@ -1616,6 +1616,49 @@
         min-width: 70px;
     }
 }
+/* ---- Modal de edición ---- */
+#editUserModal .modal-content {
+    max-width: 420px;
+}
+
+#editUserModal .form-group {
+    margin-bottom: 16px;
+}
+
+#editUserModal .form-group label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+}
+
+#editUserModal .form-group input,
+#editUserModal .form-group select {
+    width: 100%;
+    padding: 10px 14px;
+    background: var(--bg-input);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+#editUserModal .form-group input:focus,
+#editUserModal .form-group select:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+#editUserModal .form-group small {
+    display: block;
+    font-size: 0.65rem;
+    color: var(--text-secondary);
+    margin-top: 4px;
+    opacity: 0.7;
+}
     </style>
 </head>
 <body>
@@ -1826,26 +1869,21 @@
                 <div id="voucherList" class="voucher-list"></div>
             </div>
 
-            <!-- ===== SECCIÓN USUARIOS ===== -->
-            <div id="section-usuarios" class="admin-section">
-                <div class="tab-header">
-                    <h2><i class="fas fa-users" style="color:var(--accent-primary);"></i> Usuarios</h2>
-                    <p>Gestiona los usuarios de la plataforma</p>
-                </div>
-                <div class="user-form">
-                    <input type="text" id="newUsername" placeholder="Usuario" />
-                    <input type="password" id="newPassword" placeholder="Contraseña" />
-                    <input type="number" id="newCredits" placeholder="Créditos iniciales" value="0" />
-                    <button id="createUserBtn"><i class="fas fa-user-plus"></i> Crear usuario</button>
-                </div>
-                <div id="userList" class="user-list">
-                    <div class="empty-message">
-                        <i class="fas fa-users-slash"></i>
-                        <p>No hay usuarios registrados</p>
-                    </div>
-                </div>
-            </div>
-
+           <div id="section-usuarios" class="admin-section">
+    <div class="tab-header">
+        <h2><i class="fas fa-users" style="color:var(--accent-primary);"></i> Usuarios</h2>
+        <p>Gestiona los usuarios de la plataforma</p>
+    </div>
+    <div class="user-form">
+        <input type="text" id="newUsername" placeholder="Usuario" />
+        <input type="password" id="newPassword" placeholder="Contraseña" />
+        <input type="number" id="newCredits" placeholder="Créditos iniciales" value="0" />
+        <button id="createUserBtn"><i class="fas fa-user-plus"></i> Crear usuario</button>
+    </div>
+    <div id="userList" class="user-list">
+        <!-- Aquí se cargarán los usuarios -->
+    </div>
+</div>
         </main>
     </div>
 
@@ -1921,6 +1959,48 @@
             </div>
         </div>
     </div>
+    <!-- ===== MODAL EDITAR USUARIO ===== -->
+<div id="editUserModal" class="modal-overlay" style="display:none;">
+    <div class="modal-content" style="max-width:420px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-user-edit" style="color:var(--accent-primary);"></i> Editar usuario</h3>
+            <button class="modal-close" onclick="window.closeEditUserModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <input type="hidden" id="editUserId">
+            
+            <div class="form-group">
+                <label>Nombre de usuario</label>
+                <input type="text" id="editUsername" placeholder="Nombre de usuario" />
+            </div>
+            
+            <div class="form-group">
+                <label>Créditos</label>
+                <input type="number" id="editCredits" placeholder="0" min="0" />
+            </div>
+            
+            <div class="form-group">
+                <label>Nueva contraseña <span style="color:var(--text-secondary); font-weight:400; font-size:0.75rem;">(opcional)</span></label>
+                <input type="password" id="editPassword" placeholder="Dejar en blanco para no cambiar" />
+                <small>Mínimo 6 caracteres</small>
+            </div>
+            
+            <div class="form-group">
+                <label>Rol</label>
+                <select id="editRole">
+                    <option value="user">Usuario</option>
+                    <option value="admin">Administrador</option>
+                </select>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-modal-cancel" onclick="window.closeEditUserModal()">Cancelar</button>
+            <button class="btn-modal-save" id="saveEditUserBtn">Guardar cambios</button>
+        </div>
+    </div>
+</div>
 
 </body>
 </html>

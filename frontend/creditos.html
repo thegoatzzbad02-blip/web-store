@@ -11,79 +11,9 @@
 </head>
 <body>
     <div class="container">
-        <h1>SHADOW · RECARGAR</h1>
+        <h1>StreamingHub</h1>
         <a href="index.html" class="back-link">← Volver al inicio</a>
 
-        <div class="credits-info">
-            <p class="info-text">💰 Mínimo de recarga: <strong>10 USD</strong>. Escanea el código QR o copia la dirección para enviar el pago. Luego reporta tu pago por Telegram o WhatsApp.</p>
-        </div>
-
-        <h2>Métodos de pago</h2>
-        <div class="payment-grid" id="payment-grid"></div>
-
-        <div class="action-buttons">
-            <a href="https://t.me/Shadow_ccs_Web" target="_blank" class="action-btn telegram">📱 Reportar por Telegram</a>
-            <a href="https://wa.me/message/HLUJXRRMBXIPJ1" target="_blank" class="action-btn whatsapp">💬 Reportar por WhatsApp</a>
-        </div>
-
-        <footer class="footer">
-            <div class="footer-banner">
-                <a href="https://t.me/Shadow_ccs_Web" target="_blank">
-                    <img src="imagenes/bannerFOOTER.png" alt="Canal de Telegram" loading="lazy">
-                </a>
-            </div>
-            <div class="footer-content">
-               
-                <a href="creditos.html" class="btn-creditos">⚡ Adquirir créditos</a>
-            </div>
-        </footer>
-    </div>
-
-    <script>
-        const paymentMethods = [
-            { name: 'Bitcoin (BTC)', address: 'bc1qk38sg3k0ehj8c3fa2dfxq0y0luzw9cs6adqpek', currency: 'BTC' },
-            { name: 'USDT (TRC20)', address: 'TYXt3bRjHoHz24DDAVcf3QPdJ7ZEjiWJFz', currency: 'USDT' },
-            { name: 'USDC (TRC20)', address: 'TYXt3bRjHoHz24DDAVcf3QPdJ7ZEjiWJFz', currency: 'USDC' },
-            { name: 'Litecoin (LTC)', address: 'ltc1q6ndwe2rhqxkgw46r5mchg4c3hl004s75y3rty0', currency: 'LTC' },
-            { name: 'TRX (TRC20)', address: 'TYXt3bRjHoHz24DDAVcf3QPdJ7ZEjiWJFz', currency: 'TRX' }
-        ];
-
-        function shortenAddress(addr) {
-            return addr.length > 20 ? addr.slice(0, 10) + '...' + addr.slice(-6) : addr;
-        }
-
-        const container = document.getElementById('payment-grid');
-        paymentMethods.forEach(method => {
-            const card = document.createElement('div');
-            card.className = 'payment-card';
-            card.innerHTML = `
-                <h3>${method.name}</h3>
-                <div class="address-full">${method.address}</div>
-                <div class="address-short">${shortenAddress(method.address)}</div>
-                <div class="qr-container" id="qr-${method.currency}"></div>
-                <button class="copy-btn">Copiar dirección</button>
-            `;
-            const copyBtn = card.querySelector('.copy-btn');
-            copyBtn.onclick = () => {
-                navigator.clipboard.writeText(method.address);
-                alert('Dirección copiada al portapapeles');
-            };
-            container.appendChild(card);
-        });
-
-        paymentMethods.forEach(method => {
-            const qrElement = document.getElementById(`qr-${method.currency}`);
-            if (qrElement) {
-                new QRCode(qrElement, {
-                    text: method.address,
-                    width: 150,
-                    height: 150,
-                    colorDark: "#6c5ce7",
-                    colorLight: "#1a1e24",
-                    correctLevel: QRCode.CorrectLevel.H
-                });
-            }
-        });
-    </script>
+        
 </body>
 </html>

@@ -4,11 +4,10 @@ from backend.models.user_model import UserModel
 from backend.models.product_model import ProductModel
 from backend.models.voucher_model import VoucherModel
 from backend.models.solicitud_model import SolicitudModel
-from backend.models.plataforma_model import PlataformaModel  # 👈 NUEVO
+from backend.models.plataforma_model import PlataformaModel
 import traceback
 
 admin_bp = Blueprint('admin', __name__)
-
 
 # ================== USUARIOS ==================
 
@@ -23,7 +22,6 @@ def get_users():
     except Exception as e:
         print("Error en get_users:", traceback.format_exc())
         return jsonify({'message': 'Error interno al obtener usuarios'}), 500
-
 
 @admin_bp.route('/users', methods=['POST'])
 @token_required
@@ -53,26 +51,51 @@ def create_user():
         print("Error en create_user:", traceback.format_exc())
         return jsonify({'message': 'Error interno al crear usuario'}), 500
 
-
 @admin_bp.route('/users/<int:user_id>', methods=['PUT'])
 @token_required
 @admin_required
 def update_user(user_id):
-    """Actualizar un usuario existente"""
+    """Actualizar un usuario (username, credits, password, role)"""
     try:
         data = request.get_json()
-        username = data.get('username')
-        credits = data.get('credits')
-        if username is None or credits is None:
-            return jsonify({'message': 'Faltan datos'}), 400
+        print(f"📥 Datos recibidos para usuario {user_id}:", data)
 
-        if UserModel.update_user(user_id, username, credits):
-            return jsonify({'message': 'Usuario actualizado'}), 200
+        if not data:
+            return jsonify({'message': 'No hay datos para actualizar'}), 400
+
+        update_data = {}
+
+        if 'username' in data and data['username'] is not None:
+            update_data['username'] = data['username'].strip()
+
+        if 'credits' in data and data['credits'] is not None:
+            try:
+                update_data['credits'] = int(data['credits'])
+            except ValueError:
+                return jsonify({'message': 'Créditos debe ser un número'}), 400
+
+        if 'password' in data and data['password'] is not None:
+            if len(data['password']) < 6:
+                return jsonify({'message': 'La contraseña debe tener al menos 6 caracteres'}), 400
+            update_data['password'] = data['password']
+
+        if 'role' in data and data['role'] is not None:
+            if data['role'] not in ['admin', 'user']:
+                return jsonify({'message': 'Rol inválido. Debe ser "admin" o "user"'}), 400
+            update_data['role'] = data['role']
+
+        if not update_data:
+            return jsonify({'message': 'No hay campos válidos para actualizar'}), 400
+
+        print(f"🔧 Actualizando con:", update_data)
+
+        if UserModel.update_user(user_id, **update_data):
+            return jsonify({'message': 'Usuario actualizado correctamente'}), 200
         return jsonify({'message': 'Usuario no encontrado'}), 404
-    except Exception as e:
-        print("Error en update_user:", traceback.format_exc())
-        return jsonify({'message': 'Error interno al actualizar usuario'}), 500
 
+    except Exception as e:
+        print(f"❌ Error en update_user (ID {user_id}):", traceback.format_exc())
+        return jsonify({'message': 'Error interno al actualizar usuario'}), 500
 
 @admin_bp.route('/users/<int:user_id>', methods=['DELETE'])
 @token_required
@@ -87,14 +110,12 @@ def delete_user(user_id):
         print("Error en delete_user:", traceback.format_exc())
         return jsonify({'message': 'Error interno al eliminar usuario'}), 500
 
-
 # ================== PRODUCTOS ==================
 
 @admin_bp.route('/products', methods=['GET'])
 @token_required
 @admin_required
 def get_products():
-    """Obtener todos los productos"""
     try:
         products = ProductModel.get_all_products()
         return jsonify(products), 200
@@ -102,12 +123,10 @@ def get_products():
         print("Error en get_products:", traceback.format_exc())
         return jsonify({'message': 'Error interno al obtener productos'}), 500
 
-
 @admin_bp.route('/products', methods=['POST'])
 @token_required
 @admin_required
 def create_product():
-    """Crear un nuevo producto"""
     try:
         data = request.get_json()
         name = data.get('name')
@@ -126,12 +145,10 @@ def create_product():
         print("Error en create_product:", traceback.format_exc())
         return jsonify({'message': 'Error interno al crear producto'}), 500
 
-
 @admin_bp.route('/products/<int:product_id>', methods=['PUT'])
 @token_required
 @admin_required
 def update_product(product_id):
-    """Actualizar un producto existente"""
     try:
         data = request.get_json()
         name = data.get('name')
@@ -160,12 +177,10 @@ def update_product(product_id):
         print("Error en update_product:", traceback.format_exc())
         return jsonify({'message': 'Error interno al actualizar producto'}), 500
 
-
 @admin_bp.route('/products/<int:product_id>', methods=['DELETE'])
 @token_required
 @admin_required
 def delete_product(product_id):
-    """Eliminar un producto"""
     try:
         if ProductModel.delete_product(product_id):
             return jsonify({'message': 'Producto eliminado'}), 200
@@ -174,14 +189,12 @@ def delete_product(product_id):
         print("Error en delete_product:", traceback.format_exc())
         return jsonify({'message': 'Error interno al eliminar producto'}), 500
 
-
-# ================== VOUCHERS (CÓDIGOS PROMOCIONALES) ==================
+# ================== VOUCHERS ==================
 
 @admin_bp.route('/vouchers', methods=['GET'])
 @token_required
 @admin_required
 def get_vouchers():
-    """Obtener todos los códigos promocionales"""
     try:
         vouchers = VoucherModel.get_all_vouchers()
         return jsonify(vouchers), 200
@@ -189,16 +202,14 @@ def get_vouchers():
         print("Error en get_vouchers:", traceback.format_exc())
         return jsonify({'message': 'Error interno al obtener códigos'}), 500
 
-
 @admin_bp.route('/vouchers', methods=['POST'])
 @token_required
 @admin_required
 def create_voucher():
-    """Generar un nuevo código promocional"""
     try:
         data = request.get_json()
         amount = data.get('amount')
-        expires_days = data.get('expires_days')  # opcional
+        expires_days = data.get('expires_days')
         if not amount or amount <= 0:
             return jsonify({'message': 'El monto debe ser mayor a 0'}), 400
         voucher = VoucherModel.create_voucher(amount, expires_days, request.user['id'])
@@ -209,12 +220,10 @@ def create_voucher():
         print("Error en create_voucher:", traceback.format_exc())
         return jsonify({'message': 'Error interno al crear código'}), 500
 
-
 @admin_bp.route('/vouchers/<int:voucher_id>', methods=['DELETE'])
 @token_required
 @admin_required
 def delete_voucher(voucher_id):
-    """Eliminar un código promocional"""
     try:
         if VoucherModel.delete_voucher(voucher_id):
             return jsonify({'message': 'Código eliminado'}), 200
@@ -223,16 +232,12 @@ def delete_voucher(voucher_id):
         print("Error en delete_voucher:", traceback.format_exc())
         return jsonify({'message': 'Error interno al eliminar código'}), 500
 
-
-# ================================================================
-#  PLATAFORMAS (Cuentas a dominio)
-# ================================================================
+# ================== PLATAFORMAS ==================
 
 @admin_bp.route('/plataformas', methods=['GET'])
 @token_required
 @admin_required
 def get_plataformas():
-    """Obtener todas las plataformas (activas e inactivas)"""
     try:
         plataformas = PlataformaModel.get_all(solo_activas=False)
         return jsonify(plataformas), 200
@@ -240,12 +245,10 @@ def get_plataformas():
         print("Error en get_plataformas:", traceback.format_exc())
         return jsonify({'message': 'Error interno al obtener plataformas'}), 500
 
-
 @admin_bp.route('/plataformas', methods=['POST'])
 @token_required
 @admin_required
 def create_plataforma():
-    """Crear una nueva plataforma"""
     try:
         data = request.get_json()
         nombre = data.get('nombre')
@@ -255,7 +258,6 @@ def create_plataforma():
 
         if not nombre or precio is None:
             return jsonify({'message': 'Faltan datos (nombre y precio son obligatorios)'}), 400
-
         if precio <= 0:
             return jsonify({'message': 'El precio debe ser mayor a 0'}), 400
 
@@ -267,18 +269,14 @@ def create_plataforma():
         print("Error en create_plataforma:", traceback.format_exc())
         return jsonify({'message': 'Error interno al crear plataforma'}), 500
 
-
 @admin_bp.route('/plataformas/<int:id>', methods=['PUT'])
 @token_required
 @admin_required
 def update_plataforma(id):
-    """Actualizar una plataforma existente"""
     try:
         data = request.get_json()
-        
         if not data:
             return jsonify({'message': 'No hay datos para actualizar'}), 400
-
         if PlataformaModel.update(id, **data):
             return jsonify({'message': 'Plataforma actualizada'}), 200
         return jsonify({'message': 'Plataforma no encontrada'}), 404
@@ -286,12 +284,10 @@ def update_plataforma(id):
         print("Error en update_plataforma:", traceback.format_exc())
         return jsonify({'message': 'Error interno al actualizar plataforma'}), 500
 
-
 @admin_bp.route('/plataformas/<int:id>', methods=['DELETE'])
 @token_required
 @admin_required
 def delete_plataforma(id):
-    """Eliminar una plataforma"""
     try:
         if PlataformaModel.delete(id):
             return jsonify({'message': 'Plataforma eliminada'}), 200
@@ -300,40 +296,31 @@ def delete_plataforma(id):
         print("Error en delete_plataforma:", traceback.format_exc())
         return jsonify({'message': 'Error interno al eliminar plataforma'}), 500
 
-
-# ================================================================
-#  SOLICITUDES (Admin)
-# ================================================================
+# ================== SOLICITUDES ==================
 
 @admin_bp.route('/solicitudes', methods=['GET'])
 @token_required
 @admin_required
 def get_solicitudes():
-    """Obtener todas las solicitudes (con filtro por estado opcional)"""
     try:
-        estado = request.args.get('estado')  # ?estado=pending
+        estado = request.args.get('estado')
         solicitudes = SolicitudModel.get_all(estado)
         return jsonify(solicitudes), 200
     except Exception as e:
         print("Error en get_solicitudes:", traceback.format_exc())
         return jsonify({'message': 'Error interno al obtener solicitudes'}), 500
 
-
 @admin_bp.route('/solicitudes/<int:id>', methods=['PUT'])
 @token_required
 @admin_required
 def update_solicitud(id):
-    """Cambiar el estado de una solicitud (pending → completed/cancelled)"""
     try:
         data = request.get_json()
         estado = data.get('estado')
-
         if not estado:
             return jsonify({'message': 'Falta el estado'}), 400
-
         if estado not in ['pending', 'completed', 'cancelled']:
             return jsonify({'message': 'Estado inválido'}), 400
-
         if SolicitudModel.update_status(id, estado):
             return jsonify({'message': f'Solicitud actualizada a {estado}'}), 200
         return jsonify({'message': 'Solicitud no encontrada'}), 404
@@ -341,12 +328,10 @@ def update_solicitud(id):
         print("Error en update_solicitud:", traceback.format_exc())
         return jsonify({'message': 'Error interno al actualizar solicitud'}), 500
 
-
 @admin_bp.route('/solicitudes/<int:id>', methods=['DELETE'])
 @token_required
 @admin_required
 def delete_solicitud(id):
-    """Eliminar una solicitud"""
     try:
         if SolicitudModel.delete(id):
             return jsonify({'message': 'Solicitud eliminada'}), 200
@@ -355,12 +340,10 @@ def delete_solicitud(id):
         print("Error en delete_solicitud:", traceback.format_exc())
         return jsonify({'message': 'Error interno al eliminar solicitud'}), 500
 
-
 @admin_bp.route('/solicitudes/estadisticas', methods=['GET'])
 @token_required
 @admin_required
 def get_solicitudes_stats():
-    """Obtener estadísticas de solicitudes (totales, pendientes, etc.)"""
     try:
         stats = SolicitudModel.count_by_status()
         return jsonify(stats), 200

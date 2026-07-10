@@ -4,7 +4,6 @@ from backend.models.product_model import ProductModel
 from backend.models.user_model import UserModel
 from backend.models.solicitud_model import SolicitudModel
 from backend.models.plataforma_model import PlataformaModel
-from backend.models.purchase_model import PurchaseModel
 import traceback
 
 user_bp = Blueprint('user', __name__)
@@ -26,16 +25,6 @@ def get_products():
     products = ProductModel.get_available()
     return jsonify(products), 200
 
-@user_bp.route('/plataformas', methods=['GET'])
-@token_required
-def get_plataformas_user():
-    try:
-        plataformas = PlataformaModel.get_all(solo_activas=True)
-        return jsonify(plataformas), 200
-    except Exception as e:
-        print("Error en get_plataformas_user:", traceback.format_exc())
-        return jsonify({'message': 'Error interno al obtener plataformas'}), 500
-
 @user_bp.route('/buy/<int:product_id>', methods=['POST'])
 @token_required
 def buy_product(product_id):
@@ -54,23 +43,12 @@ def buy_product(product_id):
 
     new_credits = user['credits'] - product['price']
     UserModel.update_credits(user['id'], new_credits)
-    PurchaseModel.create_purchase(
-        user_id=user['id'],
-        product_id=product_id,
-        product_name=product['name'],
-        price=product['price'],
-        code=code,
-    )
 
     return jsonify({
         'message': 'Compra exitosa',
         'code': code,
         'credits_remaining': new_credits
     }), 200
-
-# ================================================================
-#  CUENTAS A DOMINIO - SOLICITUDES (USER)
-# ================================================================
 
 @user_bp.route('/solicitar-cuenta', methods=['POST'])
 @token_required
@@ -135,16 +113,16 @@ def mis_solicitudes():
 def historial_usuario():
     try:
         user = request.user
-        compras = PurchaseModel.get_by_user(user['id'])
+        # Aquí puedes agregar compras si tienes PurchaseModel
+        # compras = PurchaseModel.get_by_user(user['id'])
         solicitudes = SolicitudModel.get_by_user(user['id'])
-        return jsonify({'compras': compras, 'solicitudes': solicitudes}), 200
+        return jsonify({
+            # 'compras': compras, 
+            'solicitudes': solicitudes
+        }), 200
     except Exception as e:
         print("Error en historial_usuario:", traceback.format_exc())
         return jsonify({'message': 'Error interno al obtener historial'}), 500
-
-# ================================================================
-#  CANJEAR CÓDIGO (REDEEM)
-# ================================================================
 
 @user_bp.route('/redeem', methods=['POST'])
 @token_required
@@ -155,10 +133,10 @@ def redeem_voucher():
         code = data.get('code')
         if not code:
             return jsonify({'message': 'Falta el código'}), 400
-        
+
         user = request.user
         result = VoucherModel.redeem_voucher(code, user['id'])
-        
+
         if result['success']:
             return jsonify(result), 200
         else:
@@ -166,3 +144,15 @@ def redeem_voucher():
     except Exception as e:
         print("Error en redeem_voucher:", traceback.format_exc())
         return jsonify({'message': 'Error interno al canjear código'}), 500
+
+@user_bp.route('/plataformas', methods=['GET'])
+@token_required
+def get_plataformas_user():
+    """Obtener plataformas activas para usuarios"""
+    try:
+        from backend.models.plataforma_model import PlataformaModel
+        plataformas = PlataformaModel.get_all(solo_activas=True)
+        return jsonify(plataformas), 200
+    except Exception as e:
+        print("Error en get_plataformas_user:", traceback.format_exc())
+        return jsonify({'message': 'Error interno al obtener plataformas'}), 500

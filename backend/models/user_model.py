@@ -23,7 +23,6 @@ class UserModel:
 
     @classmethod
     def check_password(cls, username, password):
-        """Verifica las credenciales y devuelve el usuario si son correctas."""
         user = cls.find_by_username(username)
         if user and check_password_hash(user['password'], password):
             return user
@@ -31,7 +30,6 @@ class UserModel:
 
     @classmethod
     def create_user(cls, username, password, role='user', credits=0):
-        """Crea un nuevo usuario con contraseña hasheada."""
         conn = get_db()
         cursor = conn.cursor()
         hashed = generate_password_hash(password)
@@ -51,23 +49,56 @@ class UserModel:
             }
         except sqlite3.IntegrityError:
             conn.close()
-            return None  # Usuario duplicado
+            return None
 
     @classmethod
-    def update_credits(cls, user_id, new_credits):
+    def update_user(cls, user_id, **kwargs):
+        """
+        Actualiza dinámicamente los campos de un usuario.
+        Campos permitidos: username, credits, password, role.
+        """
         conn = get_db()
         cursor = conn.cursor()
-        cursor.execute("UPDATE users SET credits = ? WHERE id = ?", (new_credits, user_id))
+        update_fields = []
+        values = []
+
+        if 'username' in kwargs and kwargs['username'] is not None:
+            update_fields.append("username = ?")
+            values.append(kwargs['username'])
+
+        if 'credits' in kwargs and kwargs['credits'] is not None:
+            update_fields.append("credits = ?")
+            values.append(kwargs['credits'])
+
+        if 'password' in kwargs and kwargs['password'] is not None:
+            hashed = generate_password_hash(kwargs['password'])
+            update_fields.append("password = ?")
+            values.append(hashed)
+
+        if 'role' in kwargs and kwargs['role'] is not None:
+            if kwargs['role'] not in ['admin', 'user']:
+                conn.close()
+                return False
+            update_fields.append("role = ?")
+            values.append(kwargs['role'])
+
+        if not update_fields:
+            conn.close()
+            return False
+
+        values.append(user_id)
+        query = f"UPDATE users SET {', '.join(update_fields)} WHERE id = ?"
+        cursor.execute(query, values)
         conn.commit()
         affected = cursor.rowcount
         conn.close()
         return affected > 0
 
     @classmethod
-    def update_user(cls, user_id, new_username, new_credits):
+    def update_credits(cls, user_id, new_credits):
         conn = get_db()
         cursor = conn.cursor()
-        cursor.execute("UPDATE users SET username = ?, credits = ? WHERE id = ?", (new_username, new_credits, user_id))
+        cursor.execute("UPDATE users SET credits = ? WHERE id = ?", (new_credits, user_id))
         conn.commit()
         affected = cursor.rowcount
         conn.close()

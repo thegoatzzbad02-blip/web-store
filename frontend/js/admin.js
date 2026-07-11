@@ -1,142 +1,136 @@
 // ================================================================
-// ADMIN.JS · Panel de administración (navegación y carga)
+// ADMIN-RECARGAS · GESTIÓN DE RECARGAS
 // ================================================================
 
 (function () {
-    const token = localStorage.getItem('token');
-    const user = JSON.parse(localStorage.getItem('user') || 'null');
+    let currentFilter = 'all';
 
-    // Verificar autenticación y rol de admin
-    if (!token || !user || user.role !== 'admin') {
-        window.location.href = 'login.html';
-        return;
-    }
+    async function loadRecargasAdmin(filter = currentFilter) {
+        currentFilter = filter;
+        const container = document.getElementById('adminRecargasList');
+        if (!container) return;
 
-    // ===== ELEMENTOS DEL DOM =====
-    const sidebar = document.getElementById('adminSidebar');
-    const overlay = document.getElementById('sidebarOverlay');
-    const hamburgerToggle = document.getElementById('hamburgerToggle');
-    const navItems = document.querySelectorAll('.sidebar-nav .nav-item[data-section]');
-    const sections = document.querySelectorAll('.admin-section');
-    const pageTitle = document.getElementById('pageTitle');
-    const adminUsername = document.getElementById('adminUsername');
-    const logoutAdminBtn = document.getElementById('logoutAdminBtn');
+        container.innerHTML = '<div class="loading-message">Cargando recargas...</div>';
 
-    // ===== FUNCIONES DE MENÚ =====
-    function toggleSidebar() {
-        sidebar?.classList.toggle('open');
-        overlay?.classList.toggle('open');
-    }
+        try {
+            const url = filter === 'all' ? '/admin/recargas' : `/admin/recargas?estado=${filter}`;
+            const recargas = await window.apiGet(url);
 
-    function closeSidebar() {
-        sidebar?.classList.remove('open');
-        overlay?.classList.remove('open');
-    }
+            if (!recargas || recargas.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-message">
+                        <i class="fas fa-inbox"></i>
+                        <p>No hay solicitudes de recarga</p>
+                    </div>
+                `;
+                return;
+            }
 
-    // ===== NAVEGACIÓN ENTRE SECCIONES =====
-    function navigateToSection(section) {
-        console.log('➡️ navigateToSection ejecutado:', section);
+            container.innerHTML = recargas.map(r => {
+                const estadoClass = r.estado === 'approved' ? 'aprobado' :
+                                    r.estado === 'rejected' ? 'rechazado' : 'pendiente';
+                const estadoLabel = r.estado === 'approved' ? '✅ Aprobado' :
+                                    r.estado === 'rejected' ? '❌ Rechazado' : '⏳ Pendiente';
+                const fecha = new Date(r.creado_en).toLocaleDateString('es-ES', {
+                    day: '2-digit', month: 'short', year: 'numeric'
+                });
+                const comprobanteUrl = '/' + r.comprobante;
 
-        // Actualizar menú activo
-        navItems.forEach((item) => {
-            item.classList.toggle('active', item.dataset.section === section);
-        });
+                return `
+                    <div class="recarga-admin-item ${estadoClass}">
+                        <div class="recarga-admin-info">
+                            <div>
+                                <strong>Usuario ID: ${r.user_id}</strong>
+                                <span class="recarga-email">${r.email}</span>
+                            </div>
+                            <div class="recarga-meta">
+                                <span class="recarga-credits">${r.credits} créditos</span>
+                                <span class="recarga-amount">$${r.amount.toFixed(2)}</span>
+                                <span class="recarga-fecha">${fecha}</span>
+                            </div>
+                            <div class="recarga-comprobante">
+                                <a href="${comprobanteUrl}" target="_blank" class="btn-ver-comprobante">
+                                    <i class="fas fa-eye"></i> Ver comprobante
+                                </a>
+                                ${r.mensaje ? `<span class="recarga-mensaje">💬 ${r.mensaje}</span>` : ''}
+                                ${r.motivo ? `<span class="recarga-motivo-admin">Motivo: ${r.motivo}</span>` : ''}
+                            </div>
+                        </div>
+                        <div class="recarga-admin-actions">
+                            <span class="recarga-estado ${estadoClass}">${estadoLabel}</span>
+                            ${r.estado === 'pending' ? `
+                                <button class="btn-aprobar-recarga" onclick="window.aprobarRecarga(${r.id})">
+                                    <i class="fas fa-check"></i> Aprobar
+                                </button>
+                                <button class="btn-rechazar-recarga" onclick="window.abrirModalRechazo(${r.id})">
+                                    <i class="fas fa-times"></i> Rechazar
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
 
-        // Mostrar/Ocultar secciones
-        sections.forEach((sectionElement) => {
-            sectionElement.classList.remove('active');
-        });
-        const target = document.getElementById(`section-${section}`);
-        if (target) {
-            target.classList.add('active');
-            console.log(`✅ Sección ${section} activada`);
-        } else {
-            console.warn(`⚠️ Sección ${section} no encontrada`);
+        } catch (error) {
+            console.error('Error al cargar recargas:', error);
+            container.innerHTML = `<div class="error-message">${error.message}</div>`;
         }
-
-        // Actualizar título
-        const titles = {
-            dashboard: 'Dashboard',
-            giftcards: 'Gift Cards',
-            'cuentas-hit': 'Cuentas Hit',
-            cursos: 'Cursos',
-            'cuentas-dominio': 'Cuentas a dominio',
-            vouchers: 'Códigos',
-            usuarios: 'Usuarios',
-        };
-        if (pageTitle) {
-            pageTitle.textContent = titles[section] || 'Dashboard';
-        }
-
-        // Cargar datos según la sección (con retraso para asegurar DOM)
-        setTimeout(() => {
-            if (section === 'dashboard') {
-                window.loadDashboard?.();
-            }
-            if (section === 'giftcards' || section === 'cuentas-hit' || section === 'cursos') {
-                window.loadProductsByCategory?.(section);
-            }
-            if (section === 'cuentas-dominio') {
-                window.loadSolicitudes?.('all');
-                window.loadPlatformsConfig?.();
-            }
-            if (section === 'vouchers') {
-                window.loadVouchers?.();
-            }
-            if (section === 'usuarios') {
-                console.log('📡 Llamando a window.loadUsers()');
-                if (typeof window.loadUsers === 'function') {
-                    window.loadUsers();
-                } else {
-                    console.warn('⚠️ window.loadUsers no está definida');
-                }
-            }
-        }, 50); // Pequeño retraso para que el DOM se actualice
-
-        closeSidebar();
     }
 
-    // ===== EVENTOS =====
-    function bindEvents() {
-        // Hamburguesa
-        hamburgerToggle?.addEventListener('click', toggleSidebar);
-        overlay?.addEventListener('click', closeSidebar);
+    // ===== APROBAR RECARGA =====
+    async function aprobarRecarga(id) {
+        if (!confirm('¿Aprobar esta recarga?')) return;
+        try {
+            await window.apiPut(`/admin/recargas/${id}`, { estado: 'approved' });
+            window.showSuccess('Recarga aprobada');
+            loadRecargasAdmin(currentFilter);
+        } catch (error) {
+            window.showError(error.message);
+        }
+    }
 
-        // Navegación
-        navItems.forEach((item) => {
-            item.addEventListener('click', () => {
-                navigateToSection(item.dataset.section);
+    // ===== ABRIR MODAL PARA RECHAZAR CON MOTIVO =====
+    function abrirModalRechazo(id) {
+        const motivo = prompt('Motivo del rechazo:');
+        if (motivo === null) return;
+        if (motivo.trim() === '') {
+            window.showError('Debes ingresar un motivo');
+            return;
+        }
+        rechazarRecarga(id, motivo.trim());
+    }
+
+    async function rechazarRecarga(id, motivo) {
+        try {
+            await window.apiPut(`/admin/recargas/${id}`, { estado: 'rejected', motivo });
+            window.showSuccess('Recarga rechazada');
+            loadRecargasAdmin(currentFilter);
+        } catch (error) {
+            window.showError(error.message);
+        }
+    }
+
+    // ===== FILTROS =====
+    document.addEventListener('DOMContentLoaded', function() {
+        const filterBtns = document.querySelectorAll('#section-recargas .filter-btn');
+        if (filterBtns.length) {
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    const filter = this.dataset.filter;
+                    loadRecargasAdmin(filter);
+                });
             });
-        });
-
-        // Cerrar sesión
-        if (logoutAdminBtn) {
-            logoutAdminBtn.addEventListener('click', () => {
-                localStorage.clear();
-                window.location.href = 'login.html';
-            });
         }
-
-        // Mostrar nombre del admin
-        if (adminUsername) {
-            adminUsername.textContent = user.username || 'Admin';
+        // Cargar al inicio si la sección está activa
+        if (document.getElementById('section-recargas')?.classList.contains('active')) {
+            loadRecargasAdmin('all');
         }
-    }
-
-    // ===== INICIALIZAR =====
-    document.addEventListener('DOMContentLoaded', () => {
-        console.log('🚀 Admin.js inicializado');
-        bindEvents();
-        // Cargar dashboard por defecto
-        setTimeout(() => {
-            navigateToSection('dashboard');
-        }, 100);
     });
 
     // ===== EXPONER FUNCIONES GLOBALES =====
-    window.navigateToAdminSection = navigateToSection;
-    window.toggleSidebar = toggleSidebar;
-    window.closeSidebar = closeSidebar;
-
-    console.log('✅ admin.js listo');
+    window.loadRecargasAdmin = loadRecargasAdmin;
+    window.aprobarRecarga = aprobarRecarga;
+    window.abrirModalRechazo = abrirModalRechazo;
 })();

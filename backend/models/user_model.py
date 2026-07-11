@@ -13,6 +13,23 @@ class UserModel:
         return dict(row) if row else None
 
     @classmethod
+    def find_by_email(cls, email):
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM users WHERE email = ?", (email,))
+        row = cursor.fetchone()
+        conn.close()
+        return dict(row) if row else None
+
+    @classmethod
+    def find_by_username_or_email(cls, identifier):
+        """Busca por username o email (distingue por '@')"""
+        if '@' in identifier:
+            return cls.find_by_email(identifier)
+        else:
+            return cls.find_by_username(identifier)
+
+    @classmethod
     def find_by_id(cls, user_id):
         conn = get_db()
         cursor = conn.cursor()
@@ -22,21 +39,22 @@ class UserModel:
         return dict(row) if row else None
 
     @classmethod
-    def check_password(cls, username, password):
-        user = cls.find_by_username(username)
+    def check_password(cls, identifier, password):
+        """Verifica credenciales usando username o email"""
+        user = cls.find_by_username_or_email(identifier)
         if user and check_password_hash(user['password'], password):
             return user
         return None
 
     @classmethod
-    def create_user(cls, username, password, role='user', credits=0):
+    def create_user(cls, username, email, password, role='user', credits=0):
         conn = get_db()
         cursor = conn.cursor()
         hashed = generate_password_hash(password)
         try:
             cursor.execute(
-                "INSERT INTO users (username, password, role, credits) VALUES (?, ?, ?, ?)",
-                (username, hashed, role, credits)
+                "INSERT INTO users (username, email, password, role, credits) VALUES (?, ?, ?, ?, ?)",
+                (username, email, hashed, role, credits)
             )
             conn.commit()
             user_id = cursor.lastrowid
@@ -44,19 +62,16 @@ class UserModel:
             return {
                 'id': user_id,
                 'username': username,
+                'email': email,
                 'role': role,
                 'credits': credits
             }
         except sqlite3.IntegrityError:
             conn.close()
-            return None
+            return None  # Usuario duplicado (username o email)
 
     @classmethod
     def update_user(cls, user_id, **kwargs):
-        """
-        Actualiza dinámicamente los campos de un usuario.
-        Campos permitidos: username, credits, password, role.
-        """
         conn = get_db()
         cursor = conn.cursor()
         update_fields = []
@@ -65,6 +80,10 @@ class UserModel:
         if 'username' in kwargs and kwargs['username'] is not None:
             update_fields.append("username = ?")
             values.append(kwargs['username'])
+
+        if 'email' in kwargs and kwargs['email'] is not None:
+            update_fields.append("email = ?")
+            values.append(kwargs['email'])
 
         if 'credits' in kwargs and kwargs['credits'] is not None:
             update_fields.append("credits = ?")
@@ -118,7 +137,7 @@ class UserModel:
     def get_all_users(cls):
         conn = get_db()
         cursor = conn.cursor()
-        cursor.execute("SELECT id, username, role, credits FROM users")
+        cursor.execute("SELECT id, username, email, role, credits FROM users")
         rows = cursor.fetchall()
         conn.close()
         return [dict(row) for row in rows]

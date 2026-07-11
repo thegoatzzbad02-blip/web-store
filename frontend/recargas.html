@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Recargas · StreamingHub</title>
+    <style>
+        /* ================================================================
+           ESTILOS RECARGAS - CENTRADO E INTUITIVO
+           ================================================================ */
+        :root {
+            --bg-primary: #0a0e1a;
+            --bg-secondary: #111827;
+            --bg-card: #1a2332;
+            --bg-input: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --accent-primary: #3b82f6;
+            --accent-secondary: #60a5fa;
+            --accent-bg: rgba(59, 130, 246, 0.10);
+            --border-light: rgba(255, 255, 255, 0.15);
+            --success: #22d3ee;
+            --warning: #fbbf24;
+            --danger: #f87171;
+            --shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+            --radius: 16px;
+            --radius-sm: 10px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            padding: 24px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .recargas-container {
+            max-width: 760px;
+            width: 100%;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* ===== ENCABEZADO ===== */
+        .section-header {
+            text-align: center;
+            margin-bottom: 32px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-light);
+            width: 100%;
+        }
+        .section-header h2 {
+            font-size: 2.4rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--accent-primary), var(--success), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+        .section-header h2 i {
+            -webkit-text-fill-color: var(--accent-primary);
+            margin-right: 10px;
+        }
+        .section-header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            margin-top: 8px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* ===== DATOS DE PAGO ===== */
+        .pago-info {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius);
+            padding: 28px 32px;
+            margin-bottom: 28px;
+            box-shadow: var(--shadow);
+            width: 100%;
+            text-align: center;
+        }
+        .pago-info h3 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .pago-info h3 i {
+            color: var(--accent-primary);
+        }
+        .pago-info p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            margin-bottom: 16px;
+            line-height: 1.6;
+        }
+        .pago-info ul {
+            list-style: none;
+            padding: 0;
+            margin: 0 auto;
+            max-width: 480px;
+        }
+        .pago-info li {
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            font-size: 1rem;
+        }
+        .pago-info li:last-child {
+            border-bottom: none;
+        }
+        .pago-info li strong {
+            color: var(--text-primary);
+        }
+        .pago-info code {
+            background: var(--bg-input);
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--accent-primary);
+            font-size: 0.95rem;
+            border: 1px solid var(--border-light);
+            user-select: all;
+            cursor: copy;
+            transition: background 0.2s;
+        }
+        .pago-info code:hover {
+            background: var(--bg-secondary);
+        }
+        .pago-info small {
+            display: block;
+            margin-top: 14px;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            opacity: 0.7;
+        }
+
+        /* ===== FORMULARIO ===== */
+        .recarga-form-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius);
+            padding: 28px 32px;
+            margin-bottom: 28px;
+            box-shadow: var(--shadow);
+            width: 100%;
+        }
+        .recarga-form-container h3 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .recarga-form-container h3 i {
+            color: var(--accent-primary);
+        }
+
+        .form-group {
+            margin-bottom: 22px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            text-align: center;
+        }
+        .form-group label i {
+            color: var(--accent-primary);
+            margin-right: 8px;
+        }
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 14px 18px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            transition: border-color 0.25s, box-shadow 0.25s;
+            text-align: center;
+        }
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12);
+        }
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+            text-align: left;
+        }
+        .form-group input[readonly] {
+            opacity: 0.8;
+            cursor: not-allowed;
+        }
+        .form-group small {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 6px;
+            opacity: 0.7;
+            text-align: center;
+        }
+
+        .credits-input-group {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+        .credits-input-group input {
+            width: 120px;
+            padding: 12px 16px;
+            text-align: center;
+        }
+        .usd-equivalent {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            background: var(--bg-input);
+            padding: 8px 20px;
+            border-radius: 40px;
+            border: 1px solid var(--border-light);
+            white-space: nowrap;
+        }
+        .usd-equivalent strong {
+            color: var(--accent-primary);
+        }
+
+        .btn-enviar-recarga {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+            border: none;
+            padding: 18px 24px;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.25);
+            margin-top: 6px;
+        }
+        .btn-enviar-recarga:hover:not(:disabled) {
+            transform: scale(1.02);
+            box-shadow: 0 6px 25px rgba(59, 130, 246, 0.35);
+        }
+        .btn-enviar-recarga:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .recarga-message {
+            margin-top: 16px;
+            padding: 12px 18px;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            font-size: 1rem;
+            text-align: center;
+        }
+        .recarga-message.success {
+            background: rgba(34, 211, 238, 0.12);
+            color: var(--success);
+            border: 1px solid var(--success);
+        }
+        .recarga-message.error {
+            background: rgba(248, 113, 113, 0.12);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+
+        /* ===== SOPORTE ===== */
+        .soporte-extra {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius);
+            padding: 24px 32px;
+            margin-bottom: 28px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            width: 100%;
+        }
+        .soporte-extra p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            margin-bottom: 12px;
+        }
+        .soporte-extra p i {
+            color: var(--accent-primary);
+        }
+        .soporte-extra .btn-soporte {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 28px;
+            border-radius: 40px;
+            font-weight: 600;
+            text-decoration: none;
+            font-size: 1rem;
+            transition: transform 0.2s;
+            margin: 4px 8px;
+        }
+        .soporte-extra .btn-soporte:hover {
+            transform: scale(1.04);
+        }
+        .soporte-extra .btn-soporte.telegram {
+            background: #0088cc;
+            color: white;
+        }
+        .soporte-extra .btn-soporte.whatsapp {
+            background: #25D366;
+            color: white;
+        }
+
+        /* ===== HISTORIAL ===== */
+        .recargas-historial {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius);
+            padding: 24px 28px;
+            box-shadow: var(--shadow);
+            width: 100%;
+        }
+        .recargas-historial h4 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+        .recargas-historial h4 i {
+            color: var(--accent-primary);
+        }
+
+        .recargas-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .recarga-item {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-sm);
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            transition: border-color 0.2s;
+            border-left: 4px solid var(--text-secondary);
+        }
+        .recarga-item.pendiente {
+            border-left-color: var(--warning);
+        }
+        .recarga-item.aprobado {
+            border-left-color: var(--success);
+        }
+        .recarga-item.rechazado {
+            border-left-color: var(--danger);
+        }
+        .recarga-item:hover {
+            border-color: var(--accent-primary);
+        }
+
+        .recarga-info {
+            display: flex;
+            gap: 18px;
+            flex-wrap: wrap;
+            align-items: baseline;
+        }
+        .recarga-credits {
+            font-weight: 700;
+            font-size: 1.05rem;
+        }
+        .recarga-amount {
+            color: var(--accent-primary);
+            font-weight: 600;
+        }
+        .recarga-estado {
+            font-weight: 700;
+            font-size: 0.85rem;
+            padding: 4px 14px;
+            border-radius: 40px;
+            background: var(--bg-input);
+        }
+        .recarga-estado.pendiente {
+            color: var(--warning);
+            background: rgba(251, 191, 36, 0.12);
+        }
+        .recarga-estado.aprobado {
+            color: var(--success);
+            background: rgba(34, 211, 238, 0.12);
+        }
+        .recarga-estado.rechazado {
+            color: var(--danger);
+            background: rgba(248, 113, 113, 0.12);
+        }
+        .recarga-fecha {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+        .recarga-motivo {
+            width: 100%;
+            font-size: 0.85rem;
+            color: var(--danger);
+            margin-top: 6px;
+            padding-top: 6px;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-secondary);
+        }
+        .empty-message i {
+            font-size: 3rem;
+            opacity: 0.2;
+            display: block;
+            margin-bottom: 12px;
+        }
+        .loading-message {
+            text-align: center;
+            padding: 24px;
+            color: var(--text-secondary);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            body {
+                padding: 16px;
+            }
+            .pago-info,
+            .recarga-form-container,
+            .soporte-extra,
+            .recargas-historial {
+                padding: 20px;
+            }
+            .pago-info li {
+                flex-direction: column;
+                align-items: center;
+                gap: 4px;
+            }
+            .credits-input-group {
+                flex-direction: column;
+                align-items: center;
+            }
+            .credits-input-group input {
+                width: 140px;
+            }
+            .recarga-item {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+            }
+            .recarga-info {
+                justify-content: center;
+            }
+            .section-header h2 {
+                font-size: 2rem;
+            }
+        }
+        @media (max-width: 480px) {
+            body {
+                padding: 12px;
+            }
+            .pago-info,
+            .recarga-form-container,
+            .soporte-extra,
+            .recargas-historial {
+                padding: 16px;
+            }
+            .pago-info h3,
+            .recarga-form-container h3 {
+                font-size: 1.2rem;
+            }
+            .btn-enviar-recarga {
+                font-size: 1rem;
+                padding: 14px 20px;
+            }
+            .soporte-extra .btn-soporte {
+                font-size: 0.9rem;
+                padding: 10px 20px;
+                margin: 4px 4px;
+            }
+            .section-header h2 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="recargas-container">
+
+    <!-- ===== ENCABEZADO ===== -->
+    <div class="section-header">
+        <h2><i class="fas fa-coins"></i> Pagar ahora</h2>
+        <p>Realiza tu pago, copia los datos y sube tu comprobante para acreditar tus créditos.</p>
+    </div>
+
+    <!-- ===== DATOS DE PAGO ===== -->
+    <div class="pago-info">
+        <h3><i class="fas fa-info-circle"></i> Datos para el pago</h3>
+        <p>Copia los datos de una de las siguientes cuentas y realiza la transferencia.</p>
+        <ul>
+            <li><strong>Binance Pay:</strong> <code>binance_id_123</code></li>
+            <li><strong>PayPal:</strong> <code>pagos@streaminghub.com</code></li>
+            <li><strong>Transferencia bancaria:</strong> <code>1234567890</code> (Banco XYZ, cuenta corriente)</li>
+        </ul>
+        <small>💡 Los créditos se acreditarán automáticamente una vez que aprobemos tu solicitud.</small>
+    </div>
+
+    <!-- ===== FORMULARIO DE RECARGA ===== -->
+    <div class="recarga-form-container">
+        <h3><i class="fas fa-pen"></i> Enviar comprobante</h3>
+        <form id="recargaForm" enctype="multipart/form-data">
+            <div class="form-group">
+                <label><i class="fas fa-envelope"></i> Correo electrónico</label>
+                <input type="email" id="recargaEmail" readonly />
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-coins"></i> Créditos (mínimo 5)</label>
+                <div class="credits-input-group">
+                    <input type="number" id="recargaCredits" min="5" value="5" />
+                    <span class="usd-equivalent">= $<strong id="recargaMonto">5</strong> USD</span>
+                </div>
+                <small>1 crédito = 1 USD</small>
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-file-image"></i> Comprobante</label>
+                <input type="file" id="recargaComprobante" accept=".png,.jpg,.jpeg,.gif,.pdf" required />
+                <small>Formatos permitidos: PNG, JPG, GIF, PDF (máx. 10 MB)</small>
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-comment"></i> Mensaje (opcional)</label>
+                <textarea id="recargaMensaje" rows="3" placeholder="Escribe aquí cualquier información adicional..."></textarea>
+            </div>
+
+            <button type="submit" class="btn-enviar-recarga">
+                <i class="fas fa-paper-plane"></i> Enviar solicitud
+            </button>
+        </form>
+
+        <div id="recargaMessage" class="recarga-message"></div>
+    </div>
+
+    <!-- ===== SOPORTE ===== -->
+    <div class="soporte-extra">
+        <p><i class="fas fa-info-circle"></i> ¿Tienes problemas con el pago? Contáctanos por soporte.</p>
+        <div>
+            <a href="https://t.me/Streaminghub_play" target="_blank" class="btn-soporte telegram">
+                <i class="fab fa-telegram-plane"></i> Telegram
+            </a>
+            <a href="https://wa.me/message/HLUJXRRMBXIPJ1" target="_blank" class="btn-soporte whatsapp">
+                <i class="fab fa-whatsapp"></i> WhatsApp
+            </a>
+        </div>
+    </div>
+
+    <!-- ===== HISTORIAL DE RECARGAS ===== -->
+    <div class="recargas-historial">
+        <h4><i class="fas fa-history"></i> Historial de recargas</h4>
+        <div id="recargasList" class="recargas-list">
+            <div class="empty-message">
+                <i class="fas fa-inbox"></i>
+                <p>No tienes solicitudes de recarga</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ===== SCRIPTS ===== -->
+<script src="js/recargas.js"></script>
+</body>
+</html>

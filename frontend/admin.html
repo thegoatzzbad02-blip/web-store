@@ -1659,6 +1659,112 @@
     margin-top: 4px;
     opacity: 0.7;
 }
+/* ===== ADMIN RECARGAS ===== */
+.recarga-admin-item {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    padding: 16px 20px;
+    margin-bottom: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.recarga-admin-item.pendiente { border-left: 4px solid var(--warning); }
+.recarga-admin-item.aprobado { border-left: 4px solid var(--success); }
+.recarga-admin-item.rechazado { border-left: 4px solid var(--danger); }
+
+.recarga-admin-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.recarga-email {
+    color: var(--text-secondary);
+    margin-left: 8px;
+}
+.recarga-meta {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    font-size: 0.9rem;
+}
+.recarga-credits { font-weight: 700; }
+.recarga-amount { color: var(--accent-primary); font-weight: 600; }
+.recarga-fecha { color: var(--text-secondary); }
+.recarga-comprobante {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+.btn-ver-comprobante {
+    color: var(--accent-primary);
+    text-decoration: none;
+    font-weight: 600;
+}
+.btn-ver-comprobante:hover {
+    text-decoration: underline;
+}
+.recarga-mensaje {
+    color: var(--text-secondary);
+    font-style: italic;
+}
+.recarga-motivo-admin {
+    color: var(--danger);
+}
+
+.recarga-admin-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-top: 4px;
+}
+.recarga-estado {
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 40px;
+    font-size: 0.8rem;
+}
+.recarga-estado.pendiente {
+    background: rgba(251, 191, 36, 0.12);
+    color: var(--warning);
+}
+.recarga-estado.aprobado {
+    background: rgba(34, 211, 238, 0.12);
+    color: var(--success);
+}
+.recarga-estado.rechazado {
+    background: rgba(248, 113, 113, 0.12);
+    color: var(--danger);
+}
+
+.btn-aprobar-recarga, .btn-rechazar-recarga {
+    border: none;
+    padding: 6px 16px;
+    border-radius: 40px;
+    font-weight: 700;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.btn-aprobar-recarga {
+    background: rgba(34, 211, 238, 0.15);
+    color: var(--success);
+}
+.btn-aprobar-recarga:hover {
+    background: var(--success);
+    color: white;
+}
+.btn-rechazar-recarga {
+    background: rgba(248, 113, 113, 0.15);
+    color: var(--danger);
+}
+.btn-rechazar-recarga:hover {
+    background: var(--danger);
+    color: white;
+}
     </style>
 </head>
 <body>
@@ -1697,6 +1803,9 @@
                 <button class="nav-item" data-section="usuarios">
                     <i class="fas fa-users"></i> Usuarios
                 </button>
+                <button class="nav-item" data-section="recargas">
+    <i class="fas fa-coins"></i> Recargas
+</button>
                 <hr class="menu-divider" style="border: none; border-top: 1px solid var(--border-light); margin: 10px 0 8px;" />
                 <button class="nav-item logout" id="logoutAdminBtn">
                     <i class="fas fa-sign-out-alt"></i> Cerrar sesión
@@ -1784,7 +1893,29 @@
                 </div>
                 <div class="product-list" id="list-cuentas-hit"></div>
             </div>
+<!-- ===== SECCIÓN RECARGAS (ADMIN) ===== -->
+<div id="section-recargas" class="admin-section">
+    <div class="tab-header">
+        <h2><i class="fas fa-coins" style="color:var(--accent-primary);"></i> Recargas</h2>
+        <p>Gestiona las solicitudes de recarga de créditos</p>
+    </div>
 
+    <!-- Filtros -->
+    <div class="dominio-filters">
+        <button class="filter-btn active" data-filter="all">Todas</button>
+        <button class="filter-btn" data-filter="pending">⏳ Pendientes</button>
+        <button class="filter-btn" data-filter="approved">✅ Aprobadas</button>
+        <button class="filter-btn" data-filter="rejected">❌ Rechazadas</button>
+    </div>
+
+    <!-- Lista de recargas -->
+    <div id="adminRecargasList" class="recargas-list-admin">
+        <div class="empty-message">
+            <i class="fas fa-inbox"></i>
+            <p>No hay solicitudes de recarga</p>
+        </div>
+    </div>
+</div>
             <!-- ===== SECCIÓN CURSOS ===== -->
             <div id="section-cursos" class="admin-section">
                 <div class="tab-header">
@@ -1898,6 +2029,7 @@
     <script src="js/admin-vouchers.js"></script>
     <script src="js/admin-plataformas.js"></script>
     <script src="js/admin-solicitudes.js"></script>
+    <script src="js/admin-recargas.js"></script>
 
     <!-- ===== MODALES (fuera del main) ===== -->
     <!-- Modal detalles solicitud -->

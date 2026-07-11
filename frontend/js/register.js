@@ -1,58 +1,74 @@
-document.getElementById('registerForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    const username = document.getElementById('regUsername').value.trim();
-    const email = document.getElementById('regEmail').value.trim();
-    const password = document.getElementById('regPassword').value.trim();
-    const confirm = document.getElementById('regConfirmPassword').value.trim();
-    const msg = document.getElementById('registerMessage');
+// ================================================================
+// REGISTER · Lógica de registro
+// ================================================================
 
-    if (!username || !email || !password || !confirm) {
-        msg.className = 'auth-message error';
-        msg.textContent = '❌ Todos los campos son obligatorios.';
-        return;
-    }
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('registerForm');
+    const messageBox = document.getElementById('registerMessage');
 
-    if (password.length < 6) {
-        msg.className = 'auth-message error';
-        msg.textContent = '❌ La contraseña debe tener al menos 6 caracteres.';
-        return;
-    }
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
 
-    if (password !== confirm) {
-        msg.className = 'auth-message error';
-        msg.textContent = '❌ Las contraseñas no coinciden.';
-        return;
-    }
+        const username = document.getElementById('regUsername').value.trim();
+        const email = document.getElementById('regEmail').value.trim();
+        const password = document.getElementById('regPassword').value.trim();
+        const confirmPassword = document.getElementById('regConfirmPassword').value.trim();
 
-    try {
-        const response = await fetch('/api/auth/register', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                username: username,
-                email: email,
-                password: password,
-                confirm_password: confirm
-            })
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-            msg.className = 'auth-message success';
-            msg.textContent = '✅ ' + (data.message || 'Cuenta creada exitosamente. Redirigiendo...');
-            setTimeout(() => {
-                window.location.href = 'index.html';
-            }, 1500);
-        } else {
-            msg.className = 'auth-message error';
-            msg.textContent = '❌ ' + (data.message || 'Error al registrar');
+        // Validaciones
+        if (!username || !email || !password || !confirmPassword) {
+            messageBox.textContent = '❌ Todos los campos son obligatorios.';
+            messageBox.className = 'auth-message error';
+            return;
         }
-    } catch (error) {
-        console.error('Error en registro:', error);
-        msg.className = 'auth-message error';
-        msg.textContent = '❌ Error de conexión con el servidor.';
-    }
+
+        if (password !== confirmPassword) {
+            messageBox.textContent = '❌ Las contraseñas no coinciden.';
+            messageBox.className = 'auth-message error';
+            return;
+        }
+
+        if (password.length < 6) {
+            messageBox.textContent = '❌ La contraseña debe tener al menos 6 caracteres.';
+            messageBox.className = 'auth-message error';
+            return;
+        }
+
+        // Deshabilitar botón mientras se procesa
+        const btn = form.querySelector('.auth-btn');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creando cuenta...';
+
+        try {
+            const response = await fetch('/api/auth/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username, email, password, confirm_password: confirmPassword })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                messageBox.textContent = '✅ ' + data.message;
+                messageBox.className = 'auth-message success';
+                form.reset();
+                // Redirigir al login después de 2 segundos
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 2000);
+            } else {
+                messageBox.textContent = '❌ ' + (data.message || 'Error al registrar usuario');
+                messageBox.className = 'auth-message error';
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-user-plus"></i> Crear cuenta';
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            messageBox.textContent = '❌ Error de conexión. Intenta de nuevo.';
+            messageBox.className = 'auth-message error';
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-user-plus"></i> Crear cuenta';
+        }
+    });
 });

@@ -5,6 +5,7 @@ from backend.models.product_model import ProductModel
 from backend.models.voucher_model import VoucherModel
 from backend.models.solicitud_model import SolicitudModel
 from backend.models.plataforma_model import PlataformaModel
+from backend.models.recarga_model import RecargaModel   # 👈 Importante
 import traceback
 
 admin_bp = Blueprint('admin', __name__)
@@ -15,7 +16,6 @@ admin_bp = Blueprint('admin', __name__)
 @token_required
 @admin_required
 def get_users():
-    """Obtener todos los usuarios"""
     try:
         users = UserModel.get_all_users()
         return jsonify(users), 200
@@ -27,7 +27,6 @@ def get_users():
 @token_required
 @admin_required
 def create_user():
-    """Crear un nuevo usuario (solo admin)"""
     try:
         data = request.get_json()
         username = data.get('username')
@@ -55,11 +54,8 @@ def create_user():
 @token_required
 @admin_required
 def update_user(user_id):
-    """Actualizar un usuario (username, credits, password, role)"""
     try:
         data = request.get_json()
-        print(f"📥 Datos recibidos para usuario {user_id}:", data)
-
         if not data:
             return jsonify({'message': 'No hay datos para actualizar'}), 400
 
@@ -87,21 +83,18 @@ def update_user(user_id):
         if not update_data:
             return jsonify({'message': 'No hay campos válidos para actualizar'}), 400
 
-        print(f"🔧 Actualizando con:", update_data)
-
         if UserModel.update_user(user_id, **update_data):
             return jsonify({'message': 'Usuario actualizado correctamente'}), 200
         return jsonify({'message': 'Usuario no encontrado'}), 404
 
     except Exception as e:
-        print(f"❌ Error en update_user (ID {user_id}):", traceback.format_exc())
+        print(f"Error en update_user (ID {user_id}):", traceback.format_exc())
         return jsonify({'message': 'Error interno al actualizar usuario'}), 500
 
 @admin_bp.route('/users/<int:user_id>', methods=['DELETE'])
 @token_required
 @admin_required
 def delete_user(user_id):
-    """Eliminar un usuario"""
     try:
         if UserModel.delete_user(user_id):
             return jsonify({'message': 'Usuario eliminado'}), 200
@@ -350,3 +343,42 @@ def get_solicitudes_stats():
     except Exception as e:
         print("Error en get_solicitudes_stats:", traceback.format_exc())
         return jsonify({'message': 'Error interno al obtener estadísticas'}), 500
+
+# ================== RECARGAS (NUEVO) ==================
+
+@admin_bp.route('/recargas', methods=['GET'])
+@token_required
+@admin_required
+def get_recargas():
+    """Listar todas las solicitudes de recarga (con filtro opcional por estado)"""
+    try:
+        estado = request.args.get('estado')
+        recargas = RecargaModel.get_all(estado)
+        return jsonify(recargas), 200
+    except Exception as e:
+        print("Error en get_recargas:", traceback.format_exc())
+        return jsonify({'message': 'Error interno al obtener recargas'}), 500
+
+@admin_bp.route('/recargas/<int:id>', methods=['PUT'])
+@token_required
+@admin_required
+def update_recarga(id):
+    """Aprobar o rechazar una solicitud de recarga"""
+    try:
+        data = request.get_json()
+        estado = data.get('estado')
+        motivo = data.get('motivo')
+
+        if estado not in ['approved', 'rejected']:
+            return jsonify({'message': 'Estado inválido'}), 400
+
+        if estado == 'rejected' and not motivo:
+            return jsonify({'message': 'Debes proporcionar un motivo para rechazar'}), 400
+
+        if RecargaModel.update_status(id, estado, motivo):
+            return jsonify({'message': f'Solicitud {estado}'}), 200
+        return jsonify({'message': 'Solicitud no encontrada'}), 404
+
+    except Exception as e:
+        print("Error en update_recarga:", traceback.format_exc())
+        return jsonify({'message': 'Error interno al actualizar recarga'}), 500

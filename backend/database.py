@@ -17,11 +17,12 @@ def init_db():
     conn = get_db()
     cursor = conn.cursor()
 
-    # Tabla de usuarios
+    # Tabla de usuarios (con email)
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT UNIQUE NOT NULL,
+            email TEXT UNIQUE NOT NULL,
             password TEXT NOT NULL,
             role TEXT NOT NULL DEFAULT 'user',
             credits INTEGER DEFAULT 0
@@ -83,7 +84,7 @@ def init_db():
         )
     ''')
 
-    # 👇 NUEVA TABLA: Plataformas
+    # Tabla de plataformas
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS plataformas (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -95,17 +96,35 @@ def init_db():
         )
     ''')
 
-    # Crear admin por defecto
+    # Tabla de recargas
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS recargas (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            email TEXT NOT NULL,
+            credits INTEGER NOT NULL,
+            amount REAL NOT NULL,
+            comprobante TEXT NOT NULL,
+            mensaje TEXT,
+            estado TEXT DEFAULT 'pending',
+            motivo TEXT,
+            creado_en TEXT DEFAULT CURRENT_TIMESTAMP,
+            procesado_en TEXT,
+            FOREIGN KEY(user_id) REFERENCES users(id)
+        )
+    ''')
+
+    # Crear admin por defecto (con email)
     cursor.execute("SELECT id FROM users WHERE username = 'admin'")
     if not cursor.fetchone():
         hashed = generate_password_hash('admin123')
         cursor.execute(
-            "INSERT INTO users (username, password, role, credits) VALUES (?, ?, ?, ?)",
-            ('admin', hashed, 'admin', 0)
+            "INSERT INTO users (username, email, password, role, credits) VALUES (?, ?, ?, ?, ?)",
+            ('admin', 'admin@streaminghub.com', hashed, 'admin', 0)
         )
-        print("✅ Usuario admin creado (admin/admin123)")
+        print("✅ Usuario admin creado (admin/admin123) con email admin@streaminghub.com")
 
-    # Plataformas por defecto para cuentas a dominio
+    # Plataformas por defecto
     cursor.execute("SELECT id FROM plataformas")
     if not cursor.fetchone():
         default_platforms = [
@@ -121,7 +140,7 @@ def init_db():
 
     conn.commit()
     conn.close()
-    print("✅ Base de datos SQLite inicializada con todas las tablas.")
+    print("✅ Base de datos SQLite inicializada con todas las tablas (incluye email).")
 
 if __name__ == '__main__':
     init_db()

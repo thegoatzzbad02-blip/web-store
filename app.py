@@ -10,7 +10,6 @@ from backend.database import init_db
 load_dotenv()
 
 # ===== CONFIGURACIÓN DE RUTAS =====
-# Obtener el directorio base del proyecto
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 FRONTEND_DIR = os.path.join(BASE_DIR, 'frontend')
 
@@ -19,14 +18,20 @@ print(f"[INFO] Sirviendo frontend desde: {FRONTEND_DIR}")
 
 # ===== INICIALIZAR FLASK =====
 app = Flask(__name__, 
-            static_folder=FRONTEND_DIR,  # Carpeta de archivos estáticos
-            static_url_path='')           # Sirve desde la raíz (/)
+            static_folder=FRONTEND_DIR,
+            static_url_path='')
 
-# Configurar CORS para permitir peticiones desde el frontend
+# Configurar CORS
 CORS(app, resources={r"/api/*": {"origins": "*"}})
 
-# Clave secreta para JWT y sesiones
+# Clave secreta
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'clave_secreta_por_defecto')
+
+# Configuración de subida de archivos
+UPLOAD_FOLDER = os.path.join(BASE_DIR, 'uploads', 'comprobantes')
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024  # 10 MB
 
 # Inicializar la base de datos
 init_db()
@@ -65,6 +70,15 @@ def serve_index():
     """Sirve el archivo index.html"""
     return send_from_directory(FRONTEND_DIR, 'index.html')
 
+# ===== SERVIR ARCHIVOS DE UPLOADS (comprobantes) =====
+# 🔥 IMPORTANTE: Esta ruta DEBE ir ANTES de la ruta genérica /<path:path>
+@app.route('/uploads/<path:filename>')
+def uploads(filename):
+    """Sirve los comprobantes subidos por los usuarios"""
+    print(f"📂 Sirviendo uploads: {filename}")  # Log para depurar
+    return send_from_directory(os.path.join(BASE_DIR, 'uploads'), filename)
+
+# ===== RUTA GENÉRICA (para archivos del frontend) =====
 @app.route('/<path:path>')
 def serve_static(path):
     """Sirve cualquier archivo estático (CSS, JS, imágenes, etc.)"""

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Servinet Store · Productos digitales</title>
+    <title>StreamingHub · Productos digitales</title>
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
@@ -11,294 +11,575 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
-    <!-- Estilos -->
-   <link rel="stylesheet" href="css/style.css">
+    <!-- Estilos base -->
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="icon" type="image/png" href="https://img.icons8.com/fluency/48/shield.png" />
+
+    <!-- Particles.js para el fondo animado -->
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
 
     <style>
-        /* Estilos específicos para la landing page */
-        .landing-hero {
+        /* ================================================================
+           ESTILOS ADICIONALES PARA LA LANDING
+           ================================================================ */
+
+        /* ---- Hero ---- */
+        .hero-section {
+            position: relative;
+            min-height: 90vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             text-align: center;
-            padding: 60px 20px 40px;
-            background: radial-gradient(circle at 20% 30%, rgba(59, 130, 246, 0.08) 0%, transparent 60%);
+            padding: 40px 20px;
+            overflow: hidden;
+            z-index: 1;
         }
-        .landing-hero .hero-icon {
-            font-size: 4rem;
+
+        #particles-js {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 820px;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: var(--accent-bg);
             color: var(--accent-primary);
-            margin-bottom: 16px;
+            padding: 6px 20px;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 1px solid var(--accent-primary);
+            margin-bottom: 20px;
+            backdrop-filter: blur(4px);
         }
-        .landing-hero h1 {
-            font-size: 3rem;
+
+        .hero-title {
+            font-size: 4.2rem;
             font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 16px;
             background: linear-gradient(135deg, #3b82f6, #22d3ee, #a78bfa);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 12px;
+            text-shadow: 0 0 60px rgba(59, 130, 246, 0.15);
         }
-        .landing-hero p {
-            font-size: 1.2rem;
+
+        .hero-title span {
+            -webkit-text-fill-color: #fbbf24;
+            background: none;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
             color: var(--text-secondary);
             max-width: 600px;
-            margin: 0 auto 24px;
+            margin: 0 auto 32px;
+            line-height: 1.6;
         }
-        .landing-hero .hero-buttons {
+
+        .hero-buttons {
             display: flex;
             gap: 16px;
             justify-content: center;
             flex-wrap: wrap;
         }
-        .landing-hero .hero-buttons a {
-            padding: 14px 32px;
+
+        .btn-hero-primary {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+            padding: 16px 40px;
             border-radius: 50px;
             font-weight: 700;
+            font-size: 1.05rem;
             text-decoration: none;
-            transition: all 0.3s;
             display: inline-flex;
             align-items: center;
             gap: 10px;
-        }
-        .landing-hero .hero-buttons .btn-primary {
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-            color: white;
-            box-shadow: 0 4px 15px rgba(59,130,246,0.3);
-        }
-        .landing-hero .hero-buttons .btn-primary:hover {
-            transform: scale(1.03);
-            box-shadow: 0 6px 25px rgba(59,130,246,0.5);
-        }
-        .landing-hero .hero-buttons .btn-secondary {
-            background: transparent;
-            color: var(--text-primary);
-            border: 1px solid var(--border-light);
-        }
-        .landing-hero .hero-buttons .btn-secondary:hover {
-            border-color: var(--accent-primary);
-            background: rgba(59,130,246,0.05);
+            transition: transform 0.25s, box-shadow 0.25s;
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
         }
 
-        .landing-section-title {
-            text-align: center;
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
+        .btn-hero-primary:hover {
+            transform: scale(1.04);
+            box-shadow: 0 6px 30px rgba(59, 130, 246, 0.5);
         }
-        .landing-section-title i {
+
+        .btn-hero-secondary {
+            background: transparent;
+            color: var(--text-primary);
+            padding: 16px 40px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.05rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid var(--border-light);
+            transition: all 0.25s;
+        }
+
+        .btn-hero-secondary:hover {
+            border-color: var(--accent-primary);
+            background: var(--accent-bg);
             color: var(--accent-primary);
         }
 
-        .landing-features {
+        /* ---- Stats flotantes ---- */
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 48px;
+            flex-wrap: wrap;
+        }
+
+        .hero-stat {
+            text-align: center;
+        }
+
+        .hero-stat-number {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            display: block;
+        }
+
+        .hero-stat-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* ---- Secciones ---- */
+        .section-title {
+            text-align: center;
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .section-title i {
+            color: var(--accent-primary);
+            margin-right: 10px;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+            max-width: 600px;
+            margin: 0 auto 40px;
+        }
+
+        .features-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 24px;
-            padding: 40px 0;
+            padding: 20px 0 40px;
         }
-        .landing-features .feature-card {
+
+        .feature-card {
             background: var(--bg-card);
             border: 1px solid var(--border-light);
             border-radius: var(--radius);
-            padding: 24px;
+            padding: 32px 24px;
             text-align: center;
-            transition: transform 0.3s;
+            transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
         }
-        .landing-features .feature-card:hover {
-            transform: translateY(-4px);
+
+        .feature-card:hover {
+            transform: translateY(-6px);
             border-color: var(--accent-primary);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
         }
-        .landing-features .feature-card i {
-            font-size: 2.4rem;
+
+        .feature-card i {
+            font-size: 2.8rem;
             color: var(--accent-primary);
-            margin-bottom: 12px;
+            margin-bottom: 16px;
         }
-        .landing-features .feature-card h3 {
+
+        .feature-card h3 {
             font-size: 1.1rem;
             font-weight: 700;
             margin-bottom: 6px;
         }
-        .landing-features .feature-card p {
-            font-size: 0.9rem;
+
+        .feature-card p {
             color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.5;
         }
 
-        .landing-products {
+        /* ---- Productos destacados ---- */
+        .products-preview {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 16px;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
             padding: 20px 0 40px;
         }
-        .landing-products .product-preview {
+
+        .product-preview-card {
             background: var(--bg-card);
             border: 1px solid var(--border-light);
             border-radius: var(--radius);
-            padding: 16px;
+            padding: 20px;
             text-align: center;
-            transition: border-color 0.3s, transform 0.3s;
-        }
-        .landing-products .product-preview:hover {
-            border-color: var(--accent-primary);
-            transform: translateY(-2px);
-        }
-        .landing-products .product-preview i {
-            font-size: 2rem;
-            color: var(--accent-primary);
-            margin-bottom: 8px;
-        }
-        .landing-products .product-preview h4 {
-            font-weight: 600;
-            font-size: 1rem;
-        }
-        .landing-products .product-preview span {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
+            transition: all 0.25s;
+            cursor: pointer;
         }
 
-        .landing-cta {
-            text-align: center;
-            padding: 40px 20px;
-            background: var(--bg-card);
-            border-radius: var(--radius);
-            border: 1px solid var(--border-light);
-            margin: 20px 0 30px;
+        .product-preview-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent-primary);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
         }
-        .landing-cta h2 {
-            font-size: 1.8rem;
+
+        .product-preview-card i {
+            font-size: 2.5rem;
+            color: var(--accent-primary);
+            margin-bottom: 10px;
+        }
+
+        .product-preview-card h4 {
+            font-size: 1rem;
             font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .product-preview-card p {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        /* ---- CTA ---- */
+        .cta-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius);
+            padding: 50px 30px;
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .cta-section h2 {
+            font-size: 2rem;
+            font-weight: 800;
             margin-bottom: 8px;
         }
-        .landing-cta p {
+
+        .cta-section p {
             color: var(--text-secondary);
-            margin-bottom: 20px;
+            font-size: 1.05rem;
+            max-width: 500px;
+            margin: 0 auto 24px;
         }
-        .landing-cta .btn-cta {
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-            color: white;
-            padding: 14px 36px;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: 700;
+
+        /* ---- Footer mejorado ---- */
+        .footer-landing {
+            margin-top: 40px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-light);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            text-align: center;
+        }
+
+        .footer-landing .brand {
+            font-size: 1.4rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #3b82f6, #22d3ee, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .footer-landing .socials {
+            display: flex;
+            gap: 16px;
+        }
+
+        .footer-landing .socials a {
             display: inline-flex;
             align-items: center;
-            gap: 10px;
-            transition: all 0.3s;
-            box-shadow: 0 4px 15px rgba(59,130,246,0.3);
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 1px solid var(--border-light);
+            color: var(--text-secondary);
+            transition: all 0.25s;
+            text-decoration: none;
         }
-        .landing-cta .btn-cta:hover {
-            transform: scale(1.03);
-            box-shadow: 0 6px 25px rgba(59,130,246,0.5);
+
+        .footer-landing .socials a:hover {
+            border-color: var(--accent-primary);
+            color: var(--accent-primary);
+            transform: translateY(-3px);
+        }
+
+        .footer-landing .copy {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            opacity: 0.6;
+        }
+
+        /* ---- Responsive ---- */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.8rem;
+            }
+            .hero-subtitle {
+                font-size: 1rem;
+            }
+            .hero-stats {
+                gap: 20px;
+            }
+            .hero-stat-number {
+                font-size: 1.6rem;
+            }
+            .section-title {
+                font-size: 1.8rem;
+            }
+            .features-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .products-preview {
+                grid-template-columns: 1fr 1fr;
+            }
+            .cta-section h2 {
+                font-size: 1.6rem;
+            }
         }
 
         @media (max-width: 480px) {
-            .landing-hero h1 {
+            .hero-title {
                 font-size: 2.2rem;
             }
-            .landing-hero p {
-                font-size: 1rem;
-            }
-            .landing-hero .hero-buttons a {
-                padding: 12px 24px;
-                font-size: 0.9rem;
-            }
-            .landing-features {
+            .features-grid {
                 grid-template-columns: 1fr;
             }
-            .landing-cta h2 {
-                font-size: 1.4rem;
+            .products-preview {
+                grid-template-columns: 1fr;
+            }
+            .btn-hero-primary,
+            .btn-hero-secondary {
+                width: 100%;
+                justify-content: center;
+            }
+            .hero-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+            .hero-stats {
+                flex-direction: column;
+                gap: 12px;
             }
         }
     </style>
 </head>
 <body>
- 
-    <div class="auth-container">
+
+    <div class="container" style="background: transparent; border: none; box-shadow: none; padding: 0; min-height: auto;">
 
         <!-- ===== HERO ===== -->
-        <div class="landing-hero">
-            <div class="hero-icon">
-                <i class="fas fa-circle-nodes"></i>
+        <section class="hero-section">
+            <!-- Fondo de partículas -->
+            <div id="particles-js"></div>
+
+            <div class="hero-content">
+                <span class="hero-badge"><i class="fas fa-bolt"></i> Plataforma digital</span>
+
+                <h1 class="hero-title">
+                    Streaming<span>Hub</span>
+                </h1>
+
+                <p class="hero-subtitle">
+                    Compra gift cards, cuentas premium de streaming y cursos digitales
+                    al mejor precio. Entrega instantánea y 100% segura.
+                </p>
+
+                <div class="hero-buttons">
+                    <a href="login.html" class="btn-hero-primary">
+                        <i class="fas fa-sign-in-alt"></i> Iniciar sesión
+                    </a>
+                    <a href="register.html" class="btn-hero-secondary">
+                        <i class="fas fa-user-plus"></i> Crear cuenta
+                    </a>
+                </div>
+
+                <div class="hero-stats">
+                    <div class="hero-stat">
+                        <span class="hero-stat-number">+5K</span>
+                        <span class="hero-stat-label">Usuarios activos</span>
+                    </div>
+                    <div class="hero-stat">
+                        <span class="hero-stat-number">+200</span>
+                        <span class="hero-stat-label">Productos</span>
+                    </div>
+                    <div class="hero-stat">
+                        <span class="hero-stat-number">⭐ 4.9</span>
+                        <span class="hero-stat-label">Valoración</span>
+                    </div>
+                </div>
             </div>
-            <h1>Servinet Store</h1>
-            <p>La mejor plataforma para comprar gift cards, cuentas de streaming y productos digitales al mejor precio.</p>
-            <div class="hero-buttons">
-                <a href="login.html" class="btn-primary"><i class="fas fa-sign-in-alt"></i> Iniciar sesión</a>
-                <a href="register.html" class="btn-secondary"><i class="fas fa-user-plus"></i> Registrarse</a>
+        </section>
+
+        <!-- ===== CARACTERÍSTICAS ===== -->
+        <section style="padding: 20px 0 10px;">
+            <h2 class="section-title"><i class="fas fa-star"></i> ¿Por qué StreamingHub?</h2>
+            <p class="section-subtitle">Todo lo que necesitas en un solo lugar, con la mejor experiencia.</p>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <i class="fas fa-bolt"></i>
+                    <h3>Entrega instantánea</h3>
+                    <p>Recibe tus productos al momento de la compra, sin demoras.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-shield-alt"></i>
+                    <h3>100% seguro</h3>
+                    <p>Plataforma confiable con miles de usuarios satisfechos.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-hand-holding-usd"></i>
+                    <h3>Mejores precios</h3>
+                    <p>Las ofertas más competitivas del mercado digital.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-headset"></i>
+                    <h3>Soporte 24/7</h3>
+                    <p>Atención al cliente siempre disponible para ayudarte.</p>
+                </div>
             </div>
-        </div>
+        </section>
 
         <!-- ===== PRODUCTOS DESTACADOS ===== -->
-        <h2 class="landing-section-title">
-            <i class="fas fa-gem"></i> Productos destacados
-        </h2>
-        <div class="landing-products">
-            <div class="product-preview">
-                <i class="fas fa-film"></i>
-                <h4>Streaming</h4>
-                <span>Netflix, Spotify, Disney+</span>
-            </div>
-            <div class="product-preview">
-                <i class="fas fa-gift"></i>
-                <h4>Gift Cards</h4>
-                <span>Amazon, Google Play, Steam</span>
-            </div>
-            <div class="product-preview">
-                <i class="fas fa-graduation-cap"></i>
-                <h4>Cursos</h4>
-                <span>Aprende con los mejores</span>
-            </div>
-            <div class="product-preview">
-                <i class="fas fa-coins"></i>
-                <h4>Créditos</h4>
-                <span>Recarga al instante</span>
-            </div>
-        </div>
+        <section style="padding: 10px 0 20px;">
+            <h2 class="section-title"><i class="fas fa-gem"></i> Productos destacados</h2>
+            <p class="section-subtitle">Lo más popular de nuestra tienda digital.</p>
 
-        <!-- ===== VENTAJAS ===== -->
-        <h2 class="landing-section-title">
-            <i class="fas fa-star"></i> ¿Por qué elegir Nix Sphere?
-        </h2>
-        <div class="landing-features">
-            <div class="feature-card">
-                <i class="fas fa-bolt"></i>
-                <h3>Entrega instantánea</h3>
-                <p>Recibe tus productos al momento de la compra.</p>
+            <div class="products-preview">
+                <div class="product-preview-card">
+                    <i class="fas fa-gift"></i>
+                    <h4>Gift Cards</h4>
+                    <p>Amazon, Google Play, Steam y más.</p>
+                </div>
+                <div class="product-preview-card">
+                    <i class="fas fa-film"></i>
+                    <h4>Cuentas Hit</h4>
+                    <p>Netflix, Disney+, HBO Max, Spotify.</p>
+                </div>
+                <div class="product-preview-card">
+                    <i class="fas fa-graduation-cap"></i>
+                    <h4>Cursos</h4>
+                    <p>Aprende desde cero con los mejores.</p>
+                </div>
+                <div class="product-preview-card">
+                    <i class="fas fa-coins"></i>
+                    <h4>Créditos</h4>
+                    <p>Recarga al instante para comprar más.</p>
+                </div>
             </div>
-            <div class="feature-card">
-                <i class="fas fa-shield-alt"></i>
-                <h3>100% seguro</h3>
-                <p>Plataforma confiable con miles de usuarios.</p>
-            </div>
-            <div class="feature-card">
-                <i class="fas fa-hand-holding-usd"></i>
-                <h3>Mejores precios</h3>
-                <p>Las ofertas más competitivas del mercado.</p>
-            </div>
-            <div class="feature-card">
-                <i class="fas fa-headset"></i>
-                <h3>Soporte 24/7</h3>
-                <p>Atención al cliente siempre disponible.</p>
-            </div>
-        </div>
+        </section>
 
-        <!-- ===== CALL TO ACTION ===== -->
-        <div class="landing-cta">
+        <!-- ===== CTA ===== -->
+        <section class="cta-section">
             <h2>¿Listo para empezar?</h2>
-            <p>Únete a Servinet Store y accede a los mejores productos digitales.</p>
-            <a href="register.html" class="btn-cta"><i class="fas fa-user-plus"></i> Crear cuenta gratis</a>
-        </div>
+            <p>Únete a StreamingHub y accede a los mejores productos digitales.</p>
+            <a href="register.html" class="btn-hero-primary" style="display:inline-flex;">
+                <i class="fas fa-user-plus"></i> Crear cuenta gratis
+            </a>
+        </section>
 
         <!-- ===== FOOTER ===== -->
-        <footer class="auth-footer-bottom">
-            <div class="auth-footer-social">
-                <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+        <footer class="footer-landing">
+            <span class="brand">StreamingHub</span>
+
+            <div class="socials">
                 <a href="#" aria-label="Telegram"><i class="fab fa-telegram-plane"></i></a>
+                <a href="#" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
             </div>
-            <p class="auth-copyright">
-                <i class="far fa-copyright"></i> 2026 Servinet Store· Todos los derechos reservados
-            </p>
+
+            <div class="copy">
+                <i class="far fa-copyright"></i> 2026 StreamingHub · Todos los derechos reservados
+            </div>
         </footer>
+
     </div>
+
+    <!-- ===== INICIALIZAR PARTICLES ===== -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof particlesJS !== 'undefined') {
+                particlesJS('particles-js', {
+                    particles: {
+                        number: {
+                            value: 80,
+                            density: { enable: true, value_area: 800 }
+                        },
+                        color: { value: '#3b82f6' },
+                        shape: { type: 'circle' },
+                        opacity: {
+                            value: 0.5,
+                            random: true,
+                            anim: { enable: true, speed: 1, opacity_min: 0.1 }
+                        },
+                        size: {
+                            value: 3,
+                            random: true,
+                            anim: { enable: true, speed: 2, size_min: 0.1 }
+                        },
+                        line_linked: {
+                            enable: true,
+                            distance: 150,
+                            color: '#3b82f6',
+                            opacity: 0.2,
+                            width: 1
+                        },
+                        move: {
+                            enable: true,
+                            speed: 2,
+                            direction: 'none',
+                            random: true,
+                            straight: false,
+                            out_mode: 'out'
+                        }
+                    },
+                    interactivity: {
+                        detect_on: 'canvas',
+                        events: {
+                            onhover: { enable: true, mode: 'grab' },
+                            onclick: { enable: true, mode: 'push' },
+                            resize: true
+                        },
+                        modes: {
+                            grab: { distance: 140, line_linked: { opacity: 0.5 } },
+                            push: { particles_nb: 4 }
+                        }
+                    },
+                    retina_detect: true
+                });
+            }
+        });
+    </script>
 
 </body>
 </html>

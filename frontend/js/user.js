@@ -64,6 +64,7 @@
         config: 'config.html',
         perfil: 'perfil.html',
         historial: 'historial.html',
+        recargas: 'recargas.html', // 👈 NUEVA SECCIÓN
     };
 
     function navigateTo(section) {
@@ -98,6 +99,14 @@
 
     // ===== EJECUTAR SCRIPTS DE SECCIONES =====
     function executeSectionScripts(section) {
+        // ✅ Eliminamos la llamada a initCarousel para que no se ejecute
+        // Solo se cargará el HTML del dashboard sin el script del carrusel.
+        if (section === 'dashboard') {
+            // Si quieres cargar datos del dashboard, puedes hacerlo aquí
+            if (typeof window.loadDashboard === 'function') {
+                window.loadDashboard();
+            }
+        }
         if (section === 'giftcards' && typeof window.loadGiftCards === 'function') {
             window.loadGiftCards();
         }
@@ -110,7 +119,6 @@
         if (section === 'cuentas-dominio' && typeof window.loadPlataformasSelector === 'function') {
             window.loadPlataformasSelector();
         }
-        // ✅ NUEVO: Inicializar canjear
         if (section === 'canjear' && typeof window.loadCanjear === 'function') {
             window.loadCanjear();
         }
@@ -119,6 +127,9 @@
         }
         if (section === 'historial' && typeof window.loadHistory === 'function') {
             window.loadHistory();
+        }
+        if (section === 'recargas' && typeof window.loadRecargas === 'function') {
+            window.loadRecargas();
         }
     }
 
@@ -158,8 +169,6 @@
             window.showError?.('No se pudo copiar el código');
         }
     }
-
-    // ✅ ELIMINAR: La función redeemCode ya no está aquí, se maneja en canjear.js
 
     function showPromoModal() {
         const modal = document.getElementById('promoModal');
@@ -238,12 +247,6 @@
             });
         });
 
-        // ✅ ELIMINAR: Estos elementos no existen al cargar la página
-        // const redeemBtn = document.getElementById('redeemBtn');
-        // const redeemInput = document.getElementById('redeemCodeInput');
-        // redeemBtn?.addEventListener('click', redeemCode);
-        // redeemInput?.addEventListener('keydown', ...);
-
         const closeModalBtn = document.getElementById('closeModal');
         const codeModal = document.getElementById('codeModal');
         const redeemModal = document.getElementById('redeemModal');
@@ -290,8 +293,97 @@
     window.closeModal = closeModal;
     window.cerrarRedeemModal = cerrarRedeemModal;
     window.copyCode = copyCode;
-    // ✅ ELIMINAR: window.redeemCode = redeemCode; (ya no existe)
     window.cerrarSesion = logout;
     window.logout = logout;
     window.showPromoModal = showPromoModal;
+
+    // ================================================================
+    //  CARRUSEL · LÓGICA COMPLETA (pero no se ejecuta automáticamente)
+    //  La función permanece disponible por si decides usarla.
+    // ================================================================
+
+    function initCarousel() {
+        const track = document.getElementById('carouselTrack');
+        if (!track) {
+            console.warn('⚠️ Carrusel no encontrado');
+            return;
+        }
+
+        const slides = track.querySelectorAll('.carousel-slide');
+        if (!slides.length) {
+            console.warn('⚠️ No hay slides en el carrusel');
+            return;
+        }
+
+        track.style.display = 'flex';
+        track.style.transition = 'transform 0.6s ease-in-out';
+        track.style.width = '100%';
+        track.style.height = '100%';
+
+        slides.forEach(slide => {
+            slide.style.flex = '0 0 100%';
+            slide.style.width = '100%';
+            slide.style.height = '100%';
+            slide.style.minHeight = '300px';
+            slide.style.backgroundSize = 'cover';
+            slide.style.backgroundPosition = 'center';
+            slide.style.backgroundRepeat = 'no-repeat';
+        });
+
+        const prevBtn = document.getElementById('carouselPrev');
+        const nextBtn = document.getElementById('carouselNext');
+        const indicators = document.getElementById('carouselIndicators');
+        let currentIndex = 0;
+        const totalSlides = slides.length;
+
+        if (indicators) indicators.innerHTML = '';
+
+        for (let i = 0; i < totalSlides; i++) {
+            const dot = document.createElement('span');
+            dot.className = 'dot' + (i === 0 ? ' active' : '');
+            dot.dataset.index = i;
+            dot.addEventListener('click', () => goTo(i));
+            if (indicators) indicators.appendChild(dot);
+        }
+
+        function goTo(index) {
+            if (index < 0) index = totalSlides - 1;
+            if (index >= totalSlides) index = 0;
+            currentIndex = index;
+            const offset = -currentIndex * 100;
+            track.style.transform = `translateX(${offset}%)`;
+            console.log(`🔄 Carrusel: slide ${currentIndex + 1} de ${totalSlides} (transform: ${offset}%)`);
+
+            if (indicators) {
+                indicators.querySelectorAll('.dot').forEach((d, i) => {
+                    d.classList.toggle('active', i === currentIndex);
+                });
+            }
+        }
+
+        if (prevBtn) {
+            const newPrev = prevBtn.cloneNode(true);
+            prevBtn.parentNode.replaceChild(newPrev, prevBtn);
+            newPrev.addEventListener('click', (e) => {
+                e.preventDefault();
+                goTo(currentIndex - 1);
+            });
+        }
+        if (nextBtn) {
+            const newNext = nextBtn.cloneNode(true);
+            nextBtn.parentNode.replaceChild(newNext, nextBtn);
+            newNext.addEventListener('click', (e) => {
+                e.preventDefault();
+                goTo(currentIndex + 1);
+            });
+        }
+
+        if (window.carouselInterval) clearInterval(window.carouselInterval);
+        window.carouselInterval = setInterval(() => goTo(currentIndex + 1), 5000);
+
+        goTo(0);
+        console.log('✅ Carrusel inicializado correctamente');
+    }
+
+    window.initCarousel = initCarousel;
 })();

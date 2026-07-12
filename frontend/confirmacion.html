@@ -3,26 +3,241 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Confirmación de compra</title>
- <link rel="stylesheet" href="css/style.css">
+    <title>Confirmación · StreamingHub</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <style>
+        /* Estilos específicos para la confirmación */
+        .confirmacion-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            background: var(--bg-primary);
+        }
+        .confirmacion-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 40px 32px;
+            max-width: 500px;
+            width: 100%;
+            border: 1px solid var(--border-light);
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+        .confirmacion-icon {
+            font-size: 4.5rem;
+            color: var(--success);
+            margin-bottom: 12px;
+        }
+        .confirmacion-icon i {
+            background: rgba(34, 211, 238, 0.12);
+            padding: 20px;
+            border-radius: 50%;
+        }
+        .confirmacion-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 6px;
+            color: var(--text-primary);
+        }
+        .confirmacion-subtitle {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+        .code-box {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-sm);
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .code-box .code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+            letter-spacing: 0.5px;
+            word-break: break-all;
+            flex: 1;
+            text-align: left;
+        }
+        .code-box .btn-copy {
+            background: var(--accent-bg);
+            border: none;
+            color: var(--accent-primary);
+            padding: 8px 16px;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .code-box .btn-copy:hover {
+            background: var(--accent-primary);
+            color: white;
+            transform: scale(1.03);
+        }
+        .confirmacion-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+        .btn-catalog {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 40px;
+            font-weight: 700;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.25s;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .btn-catalog:hover {
+            transform: scale(1.03);
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+        }
+        .btn-home {
+            background: transparent;
+            border: 1px solid var(--border-light);
+            color: var(--text-secondary);
+            padding: 12px 28px;
+            border-radius: 40px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.25s;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .btn-home:hover {
+            border-color: var(--accent-primary);
+            color: var(--text-primary);
+        }
 
+        @media (max-width: 480px) {
+            .confirmacion-card {
+                padding: 28px 16px;
+            }
+            .confirmacion-title {
+                font-size: 1.4rem;
+            }
+            .code-box {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .code-box .code {
+                text-align: center;
+                font-size: 1rem;
+            }
+            .code-box .btn-copy {
+                justify-content: center;
+            }
+            .confirmacion-actions {
+                flex-direction: column;
+            }
+            .confirmacion-actions a {
+                justify-content: center;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div class="container" style="padding: 40px 20px; max-width: 720px; margin: 0 auto;">
-        <div class="auth-card" style="text-align:center;">
-            <h1 style="margin-bottom: 10px;">✅ Compra realizada</h1>
-            <p style="color: var(--text-secondary);">Tu compra fue procesada correctamente.</p>
-            <div id="confirmationCode" style="margin: 24px 0; font-size: 1.2rem; font-weight: 800; color: var(--accent-primary);"></div>
-            <a href="user.html" class="btn-primary">Volver al catálogo</a>
+    <div class="confirmacion-container">
+        <div class="confirmacion-card">
+            <!-- Ícono -->
+            <div class="confirmacion-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+
+            <!-- Título -->
+            <h1 class="confirmacion-title">¡Compra exitosa!</h1>
+            <p class="confirmacion-subtitle">Tu producto ya está disponible. Aquí tienes tu código:</p>
+
+            <!-- Código -->
+            <div class="code-box">
+                <span class="code" id="confirmationCode">Cargando...</span>
+                <button class="btn-copy" id="copyCodeBtn">
+                    <i class="fas fa-copy"></i> Copiar
+                </button>
+            </div>
+
+            <!-- Acciones -->
+            <div class="confirmacion-actions">
+                <a href="user.html" class="btn-catalog">
+                    <i class="fas fa-arrow-left"></i> Volver al catálogo
+                </a>
+                <a href="index.html" class="btn-home">
+                    <i class="fas fa-home"></i> Inicio
+                </a>
+            </div>
         </div>
     </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const data = JSON.parse(sessionStorage.getItem('productoComprado') || '{}');
-            const codeBox = document.getElementById('confirmationCode');
-            if (codeBox) {
-                codeBox.textContent = data.contenido || 'Sin código';
+            const codeElement = document.getElementById('confirmationCode');
+            const copyBtn = document.getElementById('copyCodeBtn');
+
+            if (codeElement) {
+                codeElement.textContent = data.contenido || 'Código no disponible';
             }
+
+            // Copiar código
+            copyBtn?.addEventListener('click', () => {
+                const code = codeElement?.textContent || '';
+                if (!code) return;
+                navigator.clipboard.writeText(code).then(() => {
+                    const originalText = copyBtn.innerHTML;
+                    copyBtn.innerHTML = '<i class="fas fa-check"></i> ¡Copiado!';
+                    copyBtn.style.background = 'var(--success)';
+                    copyBtn.style.color = 'white';
+                    setTimeout(() => {
+                        copyBtn.innerHTML = originalText;
+                        copyBtn.style.background = '';
+                        copyBtn.style.color = '';
+                    }, 2000);
+                }).catch(() => {
+                    // Fallback
+                    const textarea = document.createElement('textarea');
+                    textarea.value = code;
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textarea);
+                    const originalText = copyBtn.innerHTML;
+                    copyBtn.innerHTML = '<i class="fas fa-check"></i> ¡Copiado!';
+                    copyBtn.style.background = 'var(--success)';
+                    copyBtn.style.color = 'white';
+                    setTimeout(() => {
+                        copyBtn.innerHTML = originalText;
+                        copyBtn.style.background = '';
+                        copyBtn.style.color = '';
+                    }, 2000);
+                });
+            });
         });
     </script>
 </body>

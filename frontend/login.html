@@ -13,22 +13,74 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
     <!-- Estilos -->
     <link rel="stylesheet" href="css/style.css" />
+
+    <!-- Particles.js -->
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+
+    <style>
+        #particles-js {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .auth-container {
+            position: relative;
+            z-index: 1;
+        }
+
+        .auth-card {
+            backdrop-filter: blur(2px);
+            -webkit-backdrop-filter: blur(2px);
+        }
+
+        /* Asegurar que el logo sea exactamente igual que en index */
+        .auth-logo {
+            text-align: center;
+            padding: 12px 0;
+            min-height: 70px;
+        }
+        .auth-logo .logo-icon {
+            font-size: 2.8rem;
+            color: #3b82f6;
+            display: block;
+        }
+        .auth-logo .logo-text {
+            font-size: 2.2rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #3b82f6, #22d3ee, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 0;
+            display: block;
+        }
+        .auth-logo .logo-slogan {
+            font-size: 1rem;
+            color: #94a3b8;
+            margin-top: 2px;
+            display: block;
+        }
+    </style>
 </head>
 <body class="auth-page">
 
+    <!-- ===== FONDO DE PARTÍCULAS ===== -->
+    <div id="particles-js"></div>
+
     <div class="auth-container">
 
-        <!-- ===== LOGO ===== -->
-        <div class="auth-logo" style="display: block !important; text-align: center; padding: 12px 0; min-height: 70px;">
-            <div style="font-size: 2.8rem; color: #3b82f6; display: block;">
+        <!-- ===== LOGO (IDÉNTICO A INDEX) ===== -->
+        <div class="auth-logo">
+            <div class="logo-icon">
                 <i class="fas fa-circle-nodes"></i>
             </div>
-            <h1 style="font-size: 2.2rem; font-weight: 900; background: linear-gradient(135deg, #3b82f6, #22d3ee, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin: 0; display: block;">
-                StreamingHub
-            </h1>
-            <p style="font-size: 1rem; color: #94a3b8; margin-top: 2px; display: block;">
-                Tu tienda de productos digitales
-            </p>
+            <h1 class="logo-text">StreamingHub</h1>
+            <p class="logo-slogan">Tu tienda de productos digitales</p>
         </div>
 
         <!-- ===== TARJETA DE LOGIN ===== -->
@@ -76,5 +128,58 @@
     </div>
 
     <script src="js/login.js"></script>
+
+    <!-- ===== INICIALIZAR PARTICLES ===== -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof particlesJS !== 'undefined') {
+                particlesJS('particles-js', {
+                    particles: {
+                        number: { value: 80, density: { enable: true, value_area: 800 } },
+                        color: { value: '#3b82f6' },
+                        shape: { type: 'circle' },
+                        opacity: {
+                            value: 0.5,
+                            random: true,
+                            anim: { enable: true, speed: 1, opacity_min: 0.1 }
+                        },
+                        size: {
+                            value: 3,
+                            random: true,
+                            anim: { enable: true, speed: 2, size_min: 0.1 }
+                        },
+                        line_linked: {
+                            enable: true,
+                            distance: 150,
+                            color: '#3b82f6',
+                            opacity: 0.2,
+                            width: 1
+                        },
+                        move: {
+                            enable: true,
+                            speed: 2,
+                            direction: 'none',
+                            random: true,
+                            straight: false,
+                            out_mode: 'out'
+                        }
+                    },
+                    interactivity: {
+                        detect_on: 'canvas',
+                        events: {
+                            onhover: { enable: true, mode: 'grab' },
+                            onclick: { enable: true, mode: 'push' },
+                            resize: true
+                        },
+                        modes: {
+                            grab: { distance: 140, line_linked: { opacity: 0.5 } },
+                            push: { particles_nb: 4 }
+                        }
+                    },
+                    retina_detect: true
+                });
+            }
+        });
+    </script>
 </body>
 </html>

@@ -1877,22 +1877,37 @@
                 <div class="product-list" id="list-giftcards"></div>
             </div>
 
-            <!-- ===== SECCIÓN CUENTAS HIT ===== -->
-            <div id="section-cuentas-hit" class="admin-section">
-                <div class="tab-header">
-                    <h2><i class="fas fa-film" style="color:var(--accent-primary);"></i> Cuentas Hit</h2>
-                    <p>Gestiona las cuentas de streaming premium</p>
-                </div>
-                <div class="product-form" data-category="cuentas-hit">
-                    <input type="text" placeholder="Nombre del producto" class="product-name-input" />
-                    <input type="number" placeholder="Precio (créditos)" class="product-price-input" />
-                    <input type="number" placeholder="Stock" class="product-stock-input" />
-                    <textarea placeholder="Descripción" class="product-desc-input"></textarea>
-                    <textarea placeholder="Códigos (uno por línea)" class="product-codes-input"></textarea>
-                    <button class="btn-save-product"><i class="fas fa-plus-circle"></i> Guardar Cuenta Hit</button>
-                </div>
-                <div class="product-list" id="list-cuentas-hit"></div>
+           <!-- ===== SECCIÓN CUENTAS HIT ===== -->
+<div id="section-cuentas-hit" class="admin-section">
+    <div class="tab-header">
+        <h2><i class="fas fa-film" style="color:var(--accent-primary);"></i> Cuentas Hit</h2>
+        <p>Gestiona cuentas de streaming premium (Netflix, Disney+, HBO Max, etc.)</p>
+    </div>
+
+    <div class="product-form" data-category="cuentas-hit">
+        <div style="grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <input type="text" placeholder="🔹 Nombre del producto (ej: Netflix Premium 4K)" class="product-name-input" />
+            <input type="number" placeholder="💰 Precio (créditos)" class="product-price-input" />
+        </div>
+        <input type="number" placeholder="📦 Stock (número de cuentas)" class="product-stock-input" id="productStockInput" />
+        <textarea placeholder="📝 Descripción (opcional)&#10;Ej: Cuenta con 4K y 5 perfiles" class="product-desc-input" rows="2"></textarea>
+        
+        <!-- Contenedor dinámico para los campos de códigos -->
+        <div id="codesContainer" style="grid-column: 1 / -1; margin-top: 8px;">
+            <label style="display:block; font-size:0.9rem; font-weight:600; color:var(--text-secondary); margin-bottom:6px;">
+                <i class="fas fa-key"></i> Ingresa los códigos (correo:contraseña)
+            </label>
+            <div id="codeFields">
+                <!-- Aquí se generarán dinámicamente los campos -->
+                <p style="color:var(--text-secondary); font-size:0.85rem; opacity:0.7;">Define el stock para agregar campos de código.</p>
             </div>
+        </div>
+
+        <button class="btn-save-product" style="grid-column: 1 / -1;"><i class="fas fa-plus-circle"></i> Guardar Cuenta Hit</button>
+    </div>
+
+    <div class="product-list" id="list-cuentas-hit"></div>
+</div>
 <!-- ===== SECCIÓN RECARGAS (ADMIN) ===== -->
 <div id="section-recargas" class="admin-section">
     <div class="tab-header">

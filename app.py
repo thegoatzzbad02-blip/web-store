@@ -33,6 +33,12 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024  # 10 MB
 
+# ===== MIGRACIONES AUTOMÁTICAS =====
+try:
+    from migrate import run_migrations
+    run_migrations()
+except Exception as e:
+    print(f"⚠️ Error en migraciones: {e}")
 # Inicializar la base de datos
 init_db()
 
